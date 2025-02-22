@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import contractABI from "../../util/contractABI.json";
+import contractABI from "../util/contractABI.json";
 
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
 
