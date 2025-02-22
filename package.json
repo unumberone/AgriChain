@@ -1,0 +1,33 @@
+{
+    "name": "agrichain",
+    "version": "1.0.0",
+    "description": "Blockchain-based agricultural marketplace connecting farmers and consumers",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "prepare": "husky install",
+        "smart-contracts": "cd smart-contracts && npm run",
+        "frontend": "cd frontend && npm run",
+        "backend": "cd backend && npm run",
+        "dev": "concurrently \"npm run frontend dev\" \"npm run backend dev\"",
+        "lint": "eslint ."
+    },
+    "dependencies": {
+        "@heroicons/react": "^2.2.0",
+        "@nomiclabs/hardhat-ethers": "^2.2.3",
+        "@openzeppelin/contracts": "^5.2.0",
+        "concurrently": "^8.0.1",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.7",
+        "ethers": "^5.7.2",
+        "hardhat": "^2.22.18",
+        "husky": "^8.0.3"
+    },
+    "devDependencies": {
+        "eslint": "^8.40.0",
+        "prettier": "^2.8.8"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
