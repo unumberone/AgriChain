@@ -2,6 +2,7 @@ import { Menu, X, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import GoogleTranslate from "@/components/common/googleTranslate";
 
 export default function Header({ isDarkMode, setIsDarkMode, currentTheme }) {
   const router = useRouter();
@@ -52,6 +53,11 @@ export default function Header({ isDarkMode, setIsDarkMode, currentTheme }) {
             >
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
+
+            {/* Google Translate Component */}
+            <div className="w-[50px] p-2">
+              <GoogleTranslate />
+            </div>
           </nav>
 
           {/* Mobile Navigation Toggle */}
@@ -86,6 +92,10 @@ export default function Header({ isDarkMode, setIsDarkMode, currentTheme }) {
                 {item}
               </a>
             ))}
+            {/* Google Translate in Mobile Menu */}
+            <div className="mt-2 px-3">
+              <GoogleTranslate />
+            </div>
           </div>
         </div>
       )}
