@@ -15,7 +15,7 @@ const Hero = ({currentTheme, isDarkMode}) => {
           <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8 animate-fadeIn opacity-0 animation-delay-700">
             <div className="rounded-md shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
               <a
-                href="#contact"
+                href="/register"
                 className={`w-full flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-md ${currentTheme.button} transition-all duration-300`}
               >
                 Get Started
