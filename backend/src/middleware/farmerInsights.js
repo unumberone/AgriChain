@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+
 const PORT = process.env.PORT || 5000;
 
 const farmerInsights = async (req, res) => {
