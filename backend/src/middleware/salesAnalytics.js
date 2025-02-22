@@ -5,7 +5,7 @@ dotenv.config();
 
 const salesAnalytics = async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM "SalesData"'); 
+        const result = await pool.query('SELECT month,revenue FROM "SalesData"'); 
         res.json(result.rows);
         console.log(result.rows);
     } catch (error) {
