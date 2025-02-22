@@ -25,7 +25,7 @@ const MyProducts = () => {
         quantity: 20,
         unit: 'KG',
         price: 565,
-        image: '/images/carrots.jpg'
+        image: '/images/carrots.jpeg'
       },
       {
         id: 2,
@@ -33,7 +33,7 @@ const MyProducts = () => {
         quantity: 3,
         unit: 'KG',
         price: 74.25,
-        image: '/images/tomato.jpg',
+        image: '/images/tomato.webp',
         lowStock: true
       },
       {
@@ -42,7 +42,7 @@ const MyProducts = () => {
         quantity: 7,
         unit: 'KG',
         price: 680.72,
-        image: '/images/sunflower-seeds.jpg'
+        image: '/images/sunflower-seeds.jpeg'
       }
     ]);
   
