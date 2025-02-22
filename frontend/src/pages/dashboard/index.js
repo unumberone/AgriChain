@@ -23,6 +23,9 @@ const Dashboard = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [scrolled, setScrolled] = useState(false);
+  const [aiInsights, setAiInsights] = useState('Fetching Latest AI Insights...');
+  const [farmerTip, setFarmerTip] = useState('Welcome to AgriChain!');
+  const [tipLength, setTipLength] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +37,38 @@ const Dashboard = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const fetchInsights = async () => {
+      try {
+        const response = await fetch(`http://localhost:${process.env.API_PORT || 5000}/api/data/farmerInsights`);
+        if (!response.ok) throw new Error('Failed to fetch insights');
+        const data = await response.json();
+        setAiInsights(data.summary);
+      } catch (error) {
+        console.error('Error fetching insights:', error);
+        setAiInsights('Unable to load insights. Please try again later.');
+      }
+    };
+
+    fetchInsights();
+  }, []);
+
+  useEffect(() => {
+    const fetchTip = async () => {
+      try {
+        const response = await fetch(`http://localhost:${process.env.API_PORT || 5000}/api/data/farmerTip`);
+        if (!response.ok) throw new Error('Failed to fetch tip');
+        const data = await response.json();
+        setFarmerTip(data.tip);
+        setTipLength(data.tip.length);
+      } catch (error) {
+        console.error('Error fetching tip:', error);
+        setFarmerTip('Welcome to AgriChain!');
+      }
+    };
+
+    fetchTip();
+  }, []);
 
   const theme = {
     dark: {
@@ -149,7 +184,13 @@ const Dashboard = () => {
       </header>
       
       <main className="pt-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <h1 className="text-white text-4xl font-bold mb-8 text-center">Cozy, Rainy Day vibes, Tokenomists!</h1>
+        <h1 
+          className={`text-white font-bold mb-8 text-center transition-all duration-300 ${
+            tipLength > 40 ? 'text-3xl' : 'text-4xl'
+          }`}
+        >
+          {farmerTip}
+        </h1>
 
         <div className="flex flex-col lg:flex-row gap-4 mb-8">
           <div className="flex-1 flex flex-col gap-4">
@@ -215,27 +256,24 @@ const Dashboard = () => {
           
           {/* Right */}
           <div className="flex-1 flex flex-col gap-4">
-            {/* Weather */}
+            {/* AI Insights */}
             <Card 
-              className={`bg-[#f4f1e7] p-6 h-[140px] ${cardClasses}`}
-              onClick={() => handleCardClick('/weather')}
+              className={`bg-[#f4f1e7] p-6 ${cardClasses}`}
+              onClick={() => handleCardClick('/aiInsights')}
             >
-              <div className="flex justify-between items-center mb-2">
+              <div className="flex justify-between items-center mb-3">
                 <div className="flex items-center gap-2">
                   <Cloud className="h-6 w-6" />
                   <span className="text-2xl font-bold">24° C</span>
                 </div>
                 <ArrowUpRight className="h-5 w-5" />
               </div>
-              <p className="text-gray-600 text-sm mb-2">
-                Wheat prices surged 28.82% (₹2990/qtl), possibility to hit ₹3000+. 
-                Temp rising 2-3°C expected over next few days - adjust irrigation, monitor pests.
-              </p>
-              <div className="flex justify-end">
-                <span className="text-sm text-gray-500">AI Insights</span>
+              <div className="min-h-[80px]">
+                <p className="text-gray-800 text-l leading-relaxed line-clamp-3">
+                  {aiInsights}
+                </p>
               </div>
             </Card>
-
             {/* Products */}
             <Card 
               className={`bg-[#f4f1e7] p-6 flex-1 ${cardClasses}`}
