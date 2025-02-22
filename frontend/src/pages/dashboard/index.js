@@ -6,6 +6,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
 import ChartComponent from "@/components/dashboard/ChartComponent";
 import { useRouter } from 'next/router';
+import GoogleTranslate from "@/components/common/googleTranslate";
 
 const isToday = (date) => {
   const today = new Date();
@@ -139,6 +140,12 @@ const Dashboard = () => {
                 {item}
               </button>
               ))}
+
+              {/* Google Translate Dropdown */}
+              <div className="flex items-center">
+                <GoogleTranslate />
+              </div>
+              
               <button
                 onClick={() => setIsDarkMode(!isDarkMode)}
                 className={`p-2 rounded-full hover:bg-gray-200/20 transition-colors duration-300 ${currentTheme.text}`}
