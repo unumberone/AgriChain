@@ -5,10 +5,11 @@ import farmerInsights from '../middleware/farmerInsights.js';
 import productInsights from '../middleware/productInsights.js';
 import fetchWeatherForecast from "../middleware/weather.js";
 import fetchFarmerTip from "../middleware/fetchFarmingTip.js";
+import salesAnalytics from "../middleware/salesAnalytics.js";
 
 const router = express.Router()
 
-router.get('/sales', );
+router.get('/sales', salesAnalytics);
 
 router.get("/farmerNews", fetchNews);
 
