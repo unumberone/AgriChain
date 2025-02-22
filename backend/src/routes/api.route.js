@@ -4,6 +4,7 @@ import geminiProcessor from "../middleware/gemini.js"
 import farmerInsights from '../middleware/farmerInsights.js';
 import productInsights from '../middleware/productInsights.js';
 import fetchWeatherForecast from "../middleware/weather.js";
+import fetchFarmerTip from "../middleware/fetchFarmingTip.js";
 
 const router = express.Router()
 
@@ -32,5 +33,7 @@ router.get("/weather", async (req, res) => {
   
     res.json(weatherData);
 });
+
+router.get("/farmerTip", fetchFarmerTip);
 
 export default router;
