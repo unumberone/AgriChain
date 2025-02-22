@@ -18,7 +18,8 @@ export default function Login() {
     // Add your authentication logic here
     
     // After successful authentication, redirect to dashboard
-    router.push('/dashboard');
+    if(role=='farmer') router.push('/dashboard');
+    else router.push('/consumer/dashboard');
   };
 
   const handleChange = (e) => {
