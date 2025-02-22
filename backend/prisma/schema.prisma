@@ -1,3 +1,4 @@
+// This is your Prisma schema file
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,59 +8,201 @@ datasource db {
   url      = env("DB_URL")
 }
 
-model User {
-  id            String   @id @default(uuid())
-  address       String   @unique
-  name          String?
-  email         String?  @unique
-  farmers       Farmer[] // A user can be associated with multiple farmers
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
 model Farmer {
-  id            String   @id @default(uuid())
-  user          User     @relation(fields: [userId], references: [id])
-  userId        String   @unique
-  farms         Farm[]
-  salesData     SalesData[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                   Int                   @id @default(autoincrement())
+  name                 String
+  contactNumber        String
+  email                String                @unique
+  locationId          Int
+  blockchainIdentity  String?
+  registrationDate    DateTime              @default(now())
+  location            Location              @relation(fields: [locationId], references: [id])
+  farms               Farm[]
+  communityPosts      CommunityPost[]
+  crowdfundingCampaigns CrowdfundingCampaign[]
+  analytics           Analytics[]
+  orders              Order[]
+  productListings     ProductListing[]
+
+  @@map("farmers")
 }
 
 model Farm {
-  id            String   @id @default(uuid())
-  farmId        Int      @unique // Blockchain farm ID
-  name          String
-  location      String
-  owner         Farmer   @relation(fields: [farmerId], references: [id])
-  farmerId      String
-  products      Product[]
-  certifications String[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                  Int               @id @default(autoincrement())
+  farmerId           Int
+  name               String
+  sizeHectares       Decimal
+  isOrganic          Boolean
+  certificationDetails Json?
+  createdAt          DateTime          @default(now())
+  farmer             Farmer            @relation(fields: [farmerId], references: [id])
+  farmingPractices   FarmingPractice[]
+  products           Product[]
+
+  @@map("farms")
 }
 
 model Product {
-  id            String   @id @default(uuid())
-  productId     Int      @unique // Blockchain product ID
-  name          String
-  description   String
-  price         Float
-  quantity      Int
-  farm          Farm     @relation(fields: [farmId], references: [id])
-  farmId        String
-  ipfsHash      String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                  Int               @id @default(autoincrement())
+  farmId             Int
+  name               String
+  category           String
+  description        String
+  productionDate     DateTime
+  blockchainReference String?
+  farm               Farm              @relation(fields: [farmId], references: [id])
+  productionCosts    ProductionCost[]
+  productListings    ProductListing[]
+
+  @@map("products")
 }
 
-model SalesData {
-  id            String   @id @default(uuid())
-  month         String   // Example: "2025-01" (YYYY-MM format)
-  revenue       Float
-  farmer        Farmer   @relation(fields: [farmerId], references: [id])
-  farmerId      String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+model ProductListing {
+  id                Int      @id @default(autoincrement())
+  productId        Int
+  farmerId         Int
+  quantityAvailable Decimal
+  recommendedPrice  Decimal
+  actualPrice      Decimal
+  status           String
+  unit             String
+  createdAt        DateTime @default(now())
+  product          Product  @relation(fields: [productId], references: [id])
+  farmer           Farmer   @relation(fields: [farmerId], references: [id])
+  orders           Order[]
+
+  @@map("product_listings")
+}
+
+model Consumer {
+  id                Int       @id @default(autoincrement())
+  name              String
+  email             String    @unique
+  contactNumber     String
+  blockchainIdentity String?
+  registrationDate  DateTime  @default(now())
+  orders            Order[]
+  donations         Donation[]
+  comments          Comment[]
+
+  @@map("consumers")
+}
+
+model Order {
+  id                    Int            @id @default(autoincrement())
+  consumerId           Int
+  farmerId             Int
+  listingId            Int
+  quantity             Decimal
+  totalAmount          Decimal
+  status               String
+  blockchainTransactionId String?
+  orderDate            DateTime
+  createdAt            DateTime        @default(now())
+  consumer             Consumer        @relation(fields: [consumerId], references: [id])
+  farmer               Farmer          @relation(fields: [farmerId], references: [id])
+  productListing       ProductListing  @relation(fields: [listingId], references: [id])
+
+  @@map("orders")
+}
+
+model ProductionCost {
+  id          Int      @id @default(autoincrement())
+  productId   Int
+  costType    String
+  amount      Decimal
+  description String
+  recordedAt  DateTime @default(now())
+  product     Product  @relation(fields: [productId], references: [id])
+
+  @@map("production_costs")
+}
+
+model CommunityPost {
+  id        Int       @id @default(autoincrement())
+  authorId  Int
+  title     String
+  content   String
+  category  String
+  createdAt DateTime  @default(now())
+  author    Farmer    @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+
+  @@map("community_posts")
+}
+
+model Comment {
+  id         Int           @id @default(autoincrement())
+  postId     Int
+  authorId   Int
+  authorType String
+  content    String
+  createdAt  DateTime      @default(now())
+  post       CommunityPost @relation(fields: [postId], references: [id])
+  consumer   Consumer?     @relation(fields: [authorId], references: [id])
+
+  @@map("comments")
+}
+
+model CrowdfundingCampaign {
+  id             Int        @id @default(autoincrement())
+  farmerId      Int
+  title          String
+  description    String
+  targetAmount   Decimal
+  currentAmount  Decimal
+  status         String
+  startDate      DateTime
+  endDate        DateTime
+  farmer         Farmer     @relation(fields: [farmerId], references: [id])
+  donations      Donation[]
+
+  @@map("crowdfunding_campaigns")
+}
+
+model Donation {
+  id                     Int                  @id @default(autoincrement())
+  campaignId            Int
+  donorId              Int
+  amount                Decimal
+  blockchainTransactionId String?
+  createdAt             DateTime              @default(now())
+  campaign              CrowdfundingCampaign  @relation(fields: [campaignId], references: [id])
+  donor                 Consumer              @relation(fields: [donorId], references: [id])
+
+  @@map("donations")
+}
+
+model Location {
+  id          Int      @id @default(autoincrement())
+  state       String
+  district    String
+  pincode     String
+  coordinates Json     // Using Json to store point data
+  farmers     Farmer[]
+
+  @@map("locations")
+}
+
+model Analytics {
+  id           Int      @id @default(autoincrement())
+  farmerId    Int
+  metricType   String
+  metricValue  Json
+  calculatedAt DateTime @default(now())
+  farmer       Farmer   @relation(fields: [farmerId], references: [id])
+
+  @@map("analytics")
+}
+
+model FarmingPractice {
+  id                Int      @id @default(autoincrement())
+  farmId          Int
+  practiceType     String
+  description      String
+  verificationStatus String
+  verifiedAt       DateTime?
+  farm             Farm     @relation(fields: [farmId], references: [id])
+
+  @@map("farming_practices")
 }

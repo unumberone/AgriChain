@@ -2,120 +2,339 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  // Clean up existing data
-  await prisma.salesData.deleteMany({});
-  await prisma.product.deleteMany({});
-  await prisma.farm.deleteMany({});
-  await prisma.farmer.deleteMany({});
-  await prisma.user.deleteMany({});
+  await prisma.$transaction([
+    prisma.analytics.deleteMany(),
+    prisma.donation.deleteMany(),
+    prisma.crowdfundingCampaign.deleteMany(),
+    prisma.comment.deleteMany(),
+    prisma.communityPost.deleteMany(),
+    prisma.productionCost.deleteMany(),
+    prisma.order.deleteMany(),
+    prisma.productListing.deleteMany(),
+    prisma.product.deleteMany(),
+    prisma.farmingPractice.deleteMany(),
+    prisma.farm.deleteMany(),
+    prisma.farmer.deleteMany(),
+    prisma.consumer.deleteMany(),
+    prisma.location.deleteMany(),
+  ]);
 
-  // Create Users
-  const user1 = await prisma.user.create({
-    data: {
-      address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-      name: 'John Smith',
-      email: 'john@example.com',
-    },
-  });
+  // Create locations
+  const locations = await Promise.all([
+    prisma.location.create({
+      data: {
+        state: 'Maharashtra',
+        district: 'Pune',
+        pincode: '411001',
+        coordinates: { lat: 18.5204, lng: 73.8567 }
+      }
+    }),
+    prisma.location.create({
+      data: {
+        state: 'Karnataka',
+        district: 'Bengaluru Rural',
+        pincode: '562149',
+        coordinates: { lat: 13.0827, lng: 77.5877 }
+      }
+    })
+  ]);
 
-  const user2 = await prisma.user.create({
-    data: {
-      address: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
-      name: 'Maria Garcia',
-      email: 'maria@example.com',
-    },
-  });
+  // Create farmers
+  const farmers = await Promise.all([
+    prisma.farmer.create({
+      data: {
+        name: 'Rajesh Kumar',
+        contactNumber: '+91-9876543210',
+        email: 'rajesh.kumar@example.com',
+        locationId: locations[0].id,
+        blockchainIdentity: '0x1234567890abcdef',
+        registrationDate: new Date('2023-01-15')
+      }
+    }),
+    prisma.farmer.create({
+      data: {
+        name: 'Priya Sharma',
+        contactNumber: '+91-9876543211',
+        email: 'priya.sharma@example.com',
+        locationId: locations[1].id,
+        blockchainIdentity: '0xabcdef1234567890',
+        registrationDate: new Date('2023-02-01')
+      }
+    })
+  ]);
 
-  // Create Farmers
-  const farmer1 = await prisma.farmer.create({
-    data: {
-      userId: user1.id,
-    },
-  });
+  // Create farms
+  const farms = await Promise.all([
+    prisma.farm.create({
+      data: {
+        farmerId: farmers[0].id,
+        name: 'Green Valley Organics',
+        sizeHectares: 5.5,
+        isOrganic: true,
+        certificationDetails: { certifier: 'IndiaOrganic', certificationDate: '2023-03-15' }
+      }
+    }),
+    prisma.farm.create({
+      data: {
+        farmerId: farmers[1].id,
+        name: 'Sunshine Farms',
+        sizeHectares: 3.2,
+        isOrganic: false,
+        certificationDetails: null
+      }
+    })
+  ]);
 
-  const farmer2 = await prisma.farmer.create({
-    data: {
-      userId: user2.id,
-    },
-  });
+  // Create farming practices
+  await Promise.all([
+    prisma.farmingPractice.create({
+      data: {
+        farmId: farms[0].id,
+        practiceType: 'Crop Rotation',
+        description: 'Three-year rotation cycle with legumes',
+        verificationStatus: 'verified',
+        verifiedAt: new Date('2023-04-01')
+      }
+    }),
+    prisma.farmingPractice.create({
+      data: {
+        farmId: farms[1].id,
+        practiceType: 'Integrated Pest Management',
+        description: 'Natural pest control methods',
+        verificationStatus: 'pending',
+        verifiedAt: null
+      }
+    })
+  ]);
 
-  // Create Farms
-  const farm1 = await prisma.farm.create({
-    data: {
-      farmId: 1,
-      name: 'Green Valley Organics',
-      location: 'California, USA',
-      farmerId: farmer1.id,
-      certifications: ['Organic', 'Non-GMO'],
-    },
-  });
-
-  const farm2 = await prisma.farm.create({
-    data: {
-      farmId: 2,
-      name: 'Sunshine Farms',
-      location: 'Florida, USA',
-      farmerId: farmer2.id,
-      certifications: ['Fair Trade', 'Sustainable'],
-    },
-  });
-
-  // Create Products
-  await prisma.product.createMany({
-    data: [
-      {
-        productId: 1,
+  // Create products
+  const products = await Promise.all([
+    prisma.product.create({
+      data: {
+        farmId: farms[0].id,
         name: 'Organic Tomatoes',
-        description: 'Fresh, locally grown organic tomatoes',
-        price: 4.99,
-        quantity: 100,
-        farmId: farm1.id,
-        ipfsHash: 'QmX7YYj8jzFqGo1oZ2kS5Km4XjGdP1hV4RWp9R3Q9X9Z9Z',
-      },
-      {
-        productId: 2,
-        name: 'Organic Lettuce',
-        description: 'Crisp and fresh organic lettuce',
-        price: 3.99,
-        quantity: 50,
-        farmId: farm1.id,
-        ipfsHash: 'QmY8jzFqGo1oZ2kS5Km4XjGdP1hV4RWp9R3Q9X9Z9Z9Z9',
-      },
-      {
-        productId: 3,
-        name: 'Fresh Oranges',
-        description: 'Sweet and juicy Florida oranges',
-        price: 6.99,
-        quantity: 200,
-        farmId: farm2.id,
-        ipfsHash: 'QmZ8jzFqGo1oZ2kS5Km4XjGdP1hV4RWp9R3Q9X9Z9Z9Z9',
-      },
-    ],
-  });
+        category: 'Vegetables',
+        description: 'Fresh organic tomatoes',
+        productionDate: new Date('2024-02-01'),
+        blockchainReference: '0xtomatoes123'
+      }
+    }),
+    prisma.product.create({
+      data: {
+        farmId: farms[1].id,
+        name: 'Fresh Mangoes',
+        category: 'Fruits',
+        description: 'Alphonso mangoes',
+        productionDate: new Date('2024-02-15'),
+        blockchainReference: '0xmangoes456'
+      }
+    })
+  ]);
 
-  // Create Sales Data (6 months of data for each farmer)
-  const months = ['2024-09', '2024-10', '2024-11', '2024-12', '2025-01', '2025-02'];
-  
-  for (const farmer of [farmer1, farmer2]) {
-    for (const month of months) {
-      await prisma.salesData.create({
-        data: {
-          month,
-          revenue: Math.floor(Math.random() * (10000 - 5000) + 5000), // Random revenue between 5000 and 10000
-          farmerId: farmer.id,
-        },
-      });
-    }
-  }
+  // Create product listings
+  const listings = await Promise.all([
+    prisma.productListing.create({
+      data: {
+        productId: products[0].id,
+        farmerId: farmers[0].id,
+        quantityAvailable: 100.0,
+        recommendedPrice: 50.0,
+        actualPrice: 45.0,
+        status: 'active',
+        unit: 'kg'
+      }
+    }),
+    prisma.productListing.create({
+      data: {
+        productId: products[1].id,
+        farmerId: farmers[1].id,
+        quantityAvailable: 50.0,
+        recommendedPrice: 200.0,
+        actualPrice: 180.0,
+        status: 'active',
+        unit: 'dozen'
+      }
+    })
+  ]);
 
-  console.log('Seed data created successfully');
-}
+  // Create consumers
+  const consumers = await Promise.all([
+    prisma.consumer.create({
+      data: {
+        name: 'Amit Patel',
+        email: 'amit.patel@example.com',
+        contactNumber: '+91-9876543212',
+        blockchainIdentity: '0xconsumer123'
+      }
+    }),
+    prisma.consumer.create({
+      data: {
+        name: 'Sneha Reddy',
+        email: 'sneha.reddy@example.com',
+        contactNumber: '+91-9876543213',
+        blockchainIdentity: '0xconsumer456'
+      }
+    })
+  ]);
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  // Create orders
+  await Promise.all([
+    prisma.order.create({
+      data: {
+        consumerId: consumers[0].id,
+        farmerId: farmers[0].id,
+        listingId: listings[0].id,
+        quantity: 10.0,
+        totalAmount: 450.0,
+        status: 'completed',
+        blockchainTransactionId: '0xorder123',
+        orderDate: new Date('2024-02-10')
+      }
+    }),
+    prisma.order.create({
+      data: {
+        consumerId: consumers[1].id,
+        farmerId: farmers[1].id,
+        listingId: listings[1].id,
+        quantity: 2.0,
+        totalAmount: 360.0,
+        status: 'processing',
+        blockchainTransactionId: '0xorder456',
+        orderDate: new Date('2024-02-20')
+      }
+    })
+  ]);
+
+  // Create production costs
+  await Promise.all([
+    prisma.productionCost.create({
+      data: {
+        productId: products[0].id,
+        costType: 'Seeds',
+        amount: 1000.0,
+        description: 'Organic tomato seeds'
+      }
+    }),
+    prisma.productionCost.create({
+      data: {
+        productId: products[1].id,
+        costType: 'Fertilizer',
+        amount: 2000.0,
+        description: 'Natural fertilizers'
+      }
+    })
+  ]);
+
+  // Create community posts
+  const posts = await Promise.all([
+    prisma.communityPost.create({
+      data: {
+        authorId: farmers[0].id,
+        title: 'Organic Farming Tips',
+        content: 'Here are some effective organic farming techniques...',
+        category: 'Education'
+      }
+    }),
+    prisma.communityPost.create({
+      data: {
+        authorId: farmers[1].id,
+        title: 'Market Prices Update',
+        content: 'Current market trends for fruits...',
+        category: 'Market'
+      }
+    })
+  ]);
+
+  // Create comments
+  await Promise.all([
+    prisma.comment.create({
+      data: {
+        postId: posts[0].id,
+        authorId: consumers[0].id,
+        authorType: 'consumer',
+        content: 'Very helpful information!'
+      }
+    }),
+    prisma.comment.create({
+      data: {
+        postId: posts[1].id,
+        authorId: consumers[1].id,
+        authorType: 'consumer',
+        content: 'Thanks for the market update'
+      }
+    })
+  ]);
+
+  // Create crowdfunding campaigns
+  const campaigns = await Promise.all([
+    prisma.crowdfundingCampaign.create({
+      data: {
+        farmerId: farmers[0].id,
+        title: 'Expand Organic Farm',
+        description: 'Help us expand our organic farming operations',
+        targetAmount: 100000.0,
+        currentAmount: 25000.0,
+        status: 'active',
+        startDate: new Date('2024-01-01'),
+        endDate: new Date('2024-06-30')
+      }
+    }),
+    prisma.crowdfundingCampaign.create({
+      data: {
+        farmerId: farmers[1].id,
+        title: 'New Irrigation System',
+        description: 'Modern irrigation system installation',
+        targetAmount: 50000.0,
+        currentAmount: 15000.0,
+        status: 'active',
+        startDate: new Date('2024-02-01'),
+        endDate: new Date('2024-05-31')
+      }
+    })
+  ]);
+
+  // Create donations
+  await Promise.all([
+    prisma.donation.create({
+      data: {
+        campaignId: campaigns[0].id,
+        donorId: consumers[0].id,
+        amount: 5000.0,
+        blockchainTransactionId: '0xdonation123'
+      }
+    }),
+    prisma.donation.create({
+      data: {
+        campaignId: campaigns[1].id,
+        donorId: consumers[1].id,
+        amount: 3000.0,
+        blockchainTransactionId: '0xdonation456'
+      }
+    })
+  ]);
+
+  // Create analytics
+  await Promise.all([
+    prisma.analytics.create({
+      data: {
+        farmerId: farmers[0].id,
+        metricType: 'sales',
+        metricValue: { 
+          totalSales: 45000,
+          averageOrderValue: 450,
+          customerSatisfaction: 4.8
+        }
+      }
+    }),
+    prisma.analytics.create({
+      data: {
+        farmerId: farmers[1].id,
+        metricType: 'production',
+        metricValue: {
+          totalProduction: 5000,
+          wastage: 2.5,
+          efficiency: 0.95
+        }
+      }
+    })
+  ]);
