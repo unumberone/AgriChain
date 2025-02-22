@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from 'next/image';
+import Link from 'next/link';
 import { Book, Leaf, ShoppingCart, Shield, HelpCircle, Menu, X, Sun, Moon, Volume2, VolumeX } from "lucide-react";
 
 const DocumentSection = ({ title, children, icon: Icon, content }) => {
@@ -113,9 +114,11 @@ const Documentation = () => {
                 height={30} 
                 priority
             />
-              <span className={`text-2xl font-bold ${currentTheme.text} hover:scale-105 transition-transform duration-300`}>
-                AgriChain
-              </span>
+              <Link href="/dashboard">
+                <span className={`text-2xl font-bold ${currentTheme.text} hover:scale-105 transition-transform duration-300`}>
+                  AgriChain
+                </span>
+              </Link>
             </div>
             
             <nav className="hidden md:flex items-center space-x-8">
