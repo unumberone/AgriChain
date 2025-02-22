@@ -37,7 +37,7 @@ export default function Header({ isDarkMode, setIsDarkMode, currentTheme }) {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {["Docs", "Login", "Register"].map((item) => (
+            {["Guide", "Login", "Register"].map((item) => (
               <button
                 key={item}
                 onClick={() => router.push(`/${item.toLowerCase()}`)}
@@ -76,7 +76,7 @@ export default function Header({ isDarkMode, setIsDarkMode, currentTheme }) {
       {isMenuOpen && (
         <div className="md:hidden animate-slideDown">
           <div className={`px-2 pt-2 pb-3 space-y-1 sm:px-3 ${currentTheme.headerBg}`}>
-            {["Docs", "Login", "Register"].map((item) => (
+            {["Guide", "Login", "Register"].map((item) => (
               <a
                 key={item}
                 href={`/${item.toLowerCase()}`}

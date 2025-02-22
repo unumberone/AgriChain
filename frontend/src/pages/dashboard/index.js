@@ -95,7 +95,7 @@ const Dashboard = () => {
             </div>
             
             <nav className="hidden md:flex items-center space-x-8">
-              {["Shop", "Aid", "Community"].map((item) => (
+              {["Guide", "Shop", "Aid", "Community"].map((item) => (
                 <button
                 key={item}
                 onClick={() => router.push(`/${item.toLowerCase()}`)}
@@ -133,7 +133,7 @@ const Dashboard = () => {
         {isMenuOpen && (
           <div className="md:hidden animate-slideDown">
             <div className={`px-2 pt-2 pb-3 space-y-1 sm:px-3 ${currentTheme.headerBg}`}>
-              {["Shop", "Aid", "Community"].map((item) => (
+              {["Guide", "Shop", "Aid", "Community"].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
