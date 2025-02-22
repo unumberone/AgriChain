@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import ChartComponent from "@/components/dashboard/ChartComponent";
 import { useRouter } from 'next/router';
 import GoogleTranslate from "@/components/common/googleTranslate";
+import useWallet from "../../hooks/useWallet";
 
 const isToday = (date) => {
   const today = new Date();
@@ -20,6 +21,7 @@ const isToday = (date) => {
 
 const Dashboard = () => {
   const router = useRouter();
+  const { account, connectWallet } = useWallet();
   const [date, setDate] = React.useState(new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -133,13 +135,29 @@ const Dashboard = () => {
             <nav className="hidden md:flex items-center space-x-8">
               {["Guide", "Shop", "Aid", "Community"].map((item) => (
                 <button
-                key={item}
-                onClick={() => router.push(`/${item.toLowerCase()}`)}
-                className={`${currentTheme.text} hover:text-green-400 px-3 py-2 text-sm font-medium transition-colors duration-300`}
-              >
-                {item}
-              </button>
+                  key={item}
+                  onClick={() => router.push(`/${item.toLowerCase()}`)}
+                  className={`${currentTheme.text} hover:text-green-400 px-3 py-2 text-sm font-medium transition-colors duration-300`}
+                >
+                  {item}
+                </button>
               ))}
+
+              {/* Wallet Connection Button */}
+              <div className="flex items-center">
+                {account ? (
+                  <span className={`px-3 py-1 ${currentTheme.button} rounded-md`}>
+                    {account.slice(0, 6)}...{account.slice(-4)}
+                  </span>
+                ) : (
+                  <button 
+                    onClick={connectWallet} 
+                    className={`${currentTheme.text} hover:text-green-400 px-3 py-2 text-sm font-medium transition-colors duration-300`}
+                  >
+                    Connect Wallet
+                  </button>
+                )}
+              </div>
 
               {/* Google Translate Dropdown */}
               <div className="flex items-center">
@@ -155,6 +173,20 @@ const Dashboard = () => {
             </nav>
 
             <div className="md:hidden flex items-center space-x-4">
+              {/* Mobile Wallet Button */}
+              {account ? (
+                <span className={`px-3 py-1 ${currentTheme.button} rounded-md text-sm`}>
+                  {account.slice(0, 6)}...{account.slice(-4)}
+                </span>
+              ) : (
+                <button 
+                  onClick={connectWallet} 
+                  className={`px-3 py-1 ${currentTheme.button} rounded-md text-sm`}
+                >
+                  Connect
+                </button>
+              )}
+              
               <button
                 onClick={() => setIsDarkMode(!isDarkMode)}
                 className={`p-2 rounded-full hover:bg-gray-200/20 transition-colors duration-300 ${currentTheme.text}`}
@@ -215,8 +247,8 @@ const Dashboard = () => {
               </div>
             </Card>
 
-             {/* Calendar Card */}
-             <Card className={`bg-[#f4f1e7] p-6 flex-1 ${cardClasses}`}>
+            {/* Calendar Card */}
+            <Card className={`bg-[#f4f1e7] p-6 flex-1 ${cardClasses}`}>
               <div className="flex gap-6">
                 <div className="flex-none rounded-lg overflow-hidden">
                   <Calendar
@@ -240,7 +272,7 @@ const Dashboard = () => {
                       cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-white first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
                       day: "h-9 w-9 p-0 font-normal text-white aria-selected:opacity-100",
                       day_selected: "bg-white text-black hover:bg-white hover:text-black focus:bg-white focus:text-black aria-selected:bg-white aria-selected:text-black"
-  + (isToday(date) ? " bg-green-500 text-white font-bold rounded-full" : ""),
+                        + (isToday(date) ? " bg-green-500 text-white font-bold rounded-full" : ""),
                       day_today: "bg-green-500 text-white font-bold rounded-full",
                       day_outside: "text-gray-500 opacity-50",
                       day_disabled: "text-gray-500 opacity-50",
@@ -261,7 +293,7 @@ const Dashboard = () => {
             </Card>
           </div>
           
-          {/* Right */}
+          {/* Right Column */}
           <div className="flex-1 flex flex-col gap-4">
             {/* AI Insights */}
             <Card 
@@ -281,6 +313,7 @@ const Dashboard = () => {
                 </p>
               </div>
             </Card>
+            
             {/* Products */}
             <Card 
               className={`bg-[#f4f1e7] p-6 flex-1 ${cardClasses}`}
