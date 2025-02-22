@@ -32,23 +32,6 @@ const defaultData = [
 export default function ChartComponent() {
   const [data, setData] = useState(defaultData);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        console.log("Before")
-        const response = await fetch("http://localhost:3001/api/data/sales");
-        console.log("After")
-        const result = await response.json();
-        setData(Array.isArray(result) ? result : defaultData);
-        console.log(data);
-      } catch (error) {
-        console.error("Fetch Error:", error);
-        setData(defaultData);
-      }
-    }
-    fetchData();
-  }, []);
-
   console.log(data);
   const chartData = {
     labels: data.map((item) => item.month),

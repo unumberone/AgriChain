@@ -1,0 +1,276 @@
+import React from 'react';
+import { Menu, X, Sun, Moon, ArrowUpRight, Cloud } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import Image from 'next/image'
+import { Calendar } from "@/components/ui/calendar";
+import { Card } from "@/components/ui/card";
+import ChartComponent from "@/components/dashboard/ChartComponent";
+import { useRouter } from 'next/router';
+
+const isToday = (date) => {
+  const today = new Date();
+  return (
+    date &&
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  );
+};
+
+const Dashboard = () => {
+  const router = useRouter();
+  const [date, setDate] = React.useState(new Date());
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      setScrolled(offset > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+
+  const theme = {
+    dark: {
+      bg: 'bg-gradient-to-b from-[#0B513B] to-[#000000]',
+      cardBg: 'bg-[#F5F5F0]',
+      text: 'text-white',
+      secondaryText: 'text-green-200',
+      headerBg: 'bg-[#0B513B]/95',
+      button: 'bg-green-100 hover:bg-green-200 text-[#0B513B]',
+      footer: 'bg-[#094732]'
+    },
+    light: {
+      bg: 'bg-gradient-to-b from-white to-gray-100',
+      cardBg: 'bg-gray-50',
+      text: 'text-gray-900',
+      secondaryText: 'text-green-600',
+      headerBg: 'bg-gray-300/95',
+      button: 'bg-green-600 hover:bg-green-700 text-white',
+      footer: 'bg-gray-800'
+    }
+  };
+  
+  const currentTheme = isDarkMode ? theme.dark : theme.light;
+  
+  const tasks = [
+    { name: "Check Irrigaton System", time: "9:30 AM" },
+    { name: "Fix Power in Godown", time: "2:00 PM" }
+  ];
+
+  const products = [
+    { name: "Carrots (20 KG)", price: 565, image: "/api/placeholder/80/80" },
+    { name: "Tomato (3 KG)", price: 74.25, image: "/api/placeholder/80/80", stockLow: true },
+    { name: "Sunflower Seeds (7 KG)", price: 680.72, image: "/api/placeholder/80/80" }
+  ];
+
+  const handleCardClick = (path) => {
+    router.push(path);
+  };
+
+  const cardClasses = "transition-all duration-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer";
+
+  return (
+    <div className={`min-h-screen ${currentTheme.bg} transition-colors duration-500 pb-16`}>
+      {/* Header */}
+      <header className={`fixed w-full ${scrolled ? currentTheme.headerBg : `${currentTheme.headerBg} bg-opacity-50`} transition-all duration-500 z-50`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-20 items-center">
+            <div className="flex items-center space-x-2">
+              <Image 
+                src="/images/logo.png" 
+                alt="AgriChain Logo" 
+                width={30} 
+                height={30} 
+                priority
+              />
+              <span className={`text-2xl font-bold ${currentTheme.text} hover:scale-105 transition-transform duration-300`}>
+                AgriChain
+              </span>
+            </div>
+            
+            <nav className="hidden md:flex items-center space-x-8">
+              {["Shop", "Aid", "Community"].map((item) => (
+                <button
+                key={item}
+                onClick={() => router.push(`/${item.toLowerCase()}`)}
+                className={`${currentTheme.text} hover:text-green-400 px-3 py-2 text-sm font-medium transition-colors duration-300`}
+              >
+                {item}
+              </button>
+              ))}
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className={`p-2 rounded-full hover:bg-gray-200/20 transition-colors duration-300 ${currentTheme.text}`}
+              >
+                {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+            </nav>
+
+            <div className="md:hidden flex items-center space-x-4">
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className={`p-2 rounded-full hover:bg-gray-200/20 transition-colors duration-300 ${currentTheme.text}`}
+              >
+                {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className={`${currentTheme.text} hover:text-green-400 transition-colors duration-300`}
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden animate-slideDown">
+            <div className={`px-2 pt-2 pb-3 space-y-1 sm:px-3 ${currentTheme.headerBg}`}>
+              {["Shop", "Aid", "Community"].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  className={`block px-3 py-2 text-base font-medium ${currentTheme.text} hover:text-green-400 transition-colors duration-300`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </header>
+      
+      <main className="pt-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <h1 className="text-white text-4xl font-bold mb-8 text-center">Cozy, Rainy Day vibes, Tokenomists!</h1>
+
+        <div className="flex flex-col lg:flex-row gap-4 mb-8">
+          <div className="flex-1 flex flex-col gap-4">
+            {/* Sales Analytics Card */}
+            <Card 
+              className={`bg-[#f4f1e7] p-6 h-[300px] ${cardClasses}`}
+              onClick={() => handleCardClick('/analytics')}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">SALES ANALYTICS</h2>
+                <ArrowUpRight className="h-5 w-5" />
+              </div>
+              <div className="h-[220px] w-full">
+                <ChartComponent />
+              </div>
+            </Card>
+
+             {/* Calendar Card */}
+             <Card className={`bg-[#f4f1e7] p-6 flex-1 ${cardClasses}`}>
+              <div className="flex gap-6">
+                <div className="flex-none rounded-lg overflow-hidden">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    className={`rounded-lg bg-black`}
+                    classNames={{
+                      months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                      month: "space-y-4",
+                      caption: "flex justify-center pt-1 relative items-center text-white",
+                      caption_label: "text-sm font-medium text-white",
+                      nav: "space-x-1 flex items-center",
+                      nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 text-white",
+                      nav_button_previous: "absolute left-1",
+                      nav_button_next: "absolute right-1",
+                      table: "w-full border-collapse space-y-1",
+                      head_row: "flex",
+                      head_cell: "text-white rounded-md w-9 font-normal text-[0.8rem] text-center",
+                      row: "flex w-full mt-2",
+                      cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-white first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                      day: "h-9 w-9 p-0 font-normal text-white aria-selected:opacity-100",
+                      day_selected: "bg-white text-black hover:bg-white hover:text-black focus:bg-white focus:text-black aria-selected:bg-white aria-selected:text-black"
+  + (isToday(date) ? " bg-green-500 text-white font-bold rounded-full" : ""),
+                      day_today: "bg-green-500 text-white font-bold rounded-full",
+                      day_outside: "text-gray-500 opacity-50",
+                      day_disabled: "text-gray-500 opacity-50",
+                      day_range_middle: "aria-selected:bg-gray-800 aria-selected:text-white",
+                      day_hidden: "invisible",
+                    }}
+                  />
+                </div>
+                <div className="flex-1 pt-2">
+                  {tasks.map((task, i) => (
+                    <div key={i} className="flex justify-between items-center mb-3">
+                      <span className="text-sm"><b>• {task.name}</b></span>
+                      <span className="text-sm text-gray-600">{task.time}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Card>
+          </div>
+          
+          {/* Right */}
+          <div className="flex-1 flex flex-col gap-4">
+            {/* Weather */}
+            <Card 
+              className={`bg-[#f4f1e7] p-6 h-[140px] ${cardClasses}`}
+              onClick={() => handleCardClick('/weather')}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <div className="flex items-center gap-2">
+                  <Cloud className="h-6 w-6" />
+                  <span className="text-2xl font-bold">24° C</span>
+                </div>
+                <ArrowUpRight className="h-5 w-5" />
+              </div>
+              <p className="text-gray-600 text-sm mb-2">
+                Wheat prices surged 28.82% (₹2990/qtl), possibility to hit ₹3000+. 
+                Temp rising 2-3°C expected over next few days - adjust irrigation, monitor pests.
+              </p>
+              <div className="flex justify-end">
+                <span className="text-sm text-gray-500">AI Insights</span>
+              </div>
+            </Card>
+
+            {/* Products */}
+            <Card 
+              className={`bg-[#f4f1e7] p-6 flex-1 ${cardClasses}`}
+              onClick={() => handleCardClick('/products')}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">MY PRODUCTS</h2>
+                <ArrowUpRight className="h-5 w-5" />
+              </div>
+              <div className="space-y-4">
+                {products.map((product, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-16 h-16 rounded-lg object-cover"
+                    />
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{product.name}</span>
+                        {product.stockLow && (
+                          <span className="text-red-500 text-sm">Stock Low!</span>
+                        )}
+                      </div>
+                      <span className="text-lg">₹{product.price}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default Dashboard;
