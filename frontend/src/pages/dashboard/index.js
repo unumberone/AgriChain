@@ -127,9 +127,9 @@ const Dashboard = () => {
   ];
 
   const products = [
-    { name: "Carrots (20 KG)", price: 565, image: "/images/carrots.jpeg" },
-    { name: "Tomato (3 KG)", price: 74.25, image: "/images/tomato.webp", stockLow: true },
-    { name: "Sunflower Seeds (7 KG)", price: 680.72, image: "/images/sunflower-seeds.jpeg" }
+    { name: "Carrots (20 KG)", price: 35.00, image: "/images/carrots.jpeg" },
+    { name: "Tomato (3 KG)", price: 19.25, image: "/images/tomato.webp", stockLow: true },
+    { name: "Sunflower Seeds (7 KG)", price: 60.00, image: "/images/sunflower-seeds.jpeg" }
   ];
 
   const handleCardClick = (path) => {
