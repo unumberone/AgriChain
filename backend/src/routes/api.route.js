@@ -17,6 +17,8 @@ router.get("/farmerInsights", farmerInsights);
 
 router.get("/productInsights", productInsights);
 
+router.post("/productInsights", productInsights);
+
 router.get("/weather", async (req, res) => {
     const { location } = req.query;
     if (!location) {
@@ -29,6 +31,6 @@ router.get("/weather", async (req, res) => {
     }
   
     res.json(weatherData);
-  });
+});
 
 export default router;
