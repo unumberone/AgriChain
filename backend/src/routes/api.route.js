@@ -1,12 +1,12 @@
 import express from "express"
-import fetchNews from "../middleware/fetchNews.js";
-import geminiProcessor from "../middleware/gemini.js"
-import farmerInsights from '../middleware/farmerInsights.js';
-import productInsights from '../middleware/productInsights.js';
-import fetchWeatherForecast from "../middleware/weather.js";
-import fetchFarmerTip from "../middleware/fetchFarmingTip.js";
-import salesAnalytics from "../middleware/salesAnalytics.js";
-import calculatePriceController from "../middleware/fetchFinalPrice.js";
+import fetchNews from "../controller/fetchNews.js";
+import geminiProcessor from "../controller/gemini.js"
+import farmerInsights from '../controller/farmerInsights.js';
+import productInsights from '../controller/productInsights.js';
+import fetchWeatherForecast from "../controller/weather.js";
+import fetchFarmerTip from "../controller/fetchFarmingTip.js";
+import salesAnalytics from "../controller/salesAnalytics.js";
+import calculatePriceController from "../controller/fetchFinalPrice.js";
 
 const router = express.Router()
 
