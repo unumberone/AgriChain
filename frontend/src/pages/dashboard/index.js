@@ -2,11 +2,20 @@ import React from 'react';
 import { Menu, X, Sun, Moon, ArrowUpRight, Cloud } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Image from 'next/image'
+import Link from 'next/link';
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
 import ChartComponent from "@/components/dashboard/ChartComponent";
 import { useRouter } from 'next/router';
 import GoogleTranslate from "@/components/common/googleTranslate";
+import {
+  CloudSun,
+  CloudFog,
+  CloudDrizzle,
+  CloudRain,
+  CloudSnow,
+  Cloudy
+} from 'lucide-react';
 import useWallet from "../../hooks/useWallet";
 
 const isToday = (date) => {
@@ -29,6 +38,7 @@ const Dashboard = () => {
   const [aiInsights, setAiInsights] = useState('Fetching Latest AI Insights...');
   const [farmerTip, setFarmerTip] = useState('Welcome to AgriChain!');
   const [tipLength, setTipLength] = useState(0);
+  const [weather, setWeather] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,6 +83,21 @@ const Dashboard = () => {
     fetchTip();
   }, []);
 
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const response = await fetch(`http://localhost:${process.env.API_PORT || 5000}/api/data/weather?location=coimbatore`);
+        const data = await response.json();
+        setWeather(data.forecast[0]);
+        console.log(data)
+      } catch (error) {
+        console.error('Error fetching weather:', error);
+      }
+    };
+  
+    fetchWeather();
+  }, []);
+
   const theme = {
     dark: {
       bg: 'bg-gradient-to-b from-[#0B513B] to-[#000000]',
@@ -113,6 +138,38 @@ const Dashboard = () => {
 
   const cardClasses = "transition-all duration-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer";
 
+  const getWeatherIcon = (description) => {
+    switch (description?.toLowerCase()) {
+      case 'clear sky':
+      case 'mostly clear':
+        return <Sun className="h-6 w-6" />;
+      case 'partly cloudy':
+        return <CloudSun className="h-6 w-6" />;
+      case 'overcast':
+        return <Cloudy className="h-6 w-6" />;
+      case 'foggy':
+      case 'dense fog':
+        return <CloudFog className="h-6 w-6" />;
+      case 'light drizzle':
+      case 'moderate drizzle':
+      case 'heavy drizzle':
+        return <CloudDrizzle className="h-6 w-6" />;
+      case 'light rain':
+      case 'moderate rain':
+      case 'heavy rain':
+      case 'light rain showers':
+      case 'moderate rain showers':
+      case 'heavy rain showers':
+        return <CloudRain className="h-6 w-6" />;
+      case 'light snowfall':
+      case 'moderate snowfall':
+      case 'heavy snowfall':
+        return <CloudSnow className="h-6 w-6" />;
+      default:
+        return <Cloud className="h-6 w-6" />;
+    }
+  };
+
   return (
     <div className={`min-h-screen ${currentTheme.bg} transition-colors duration-500 pb-16`}>
       {/* Header */}
@@ -127,9 +184,11 @@ const Dashboard = () => {
                 height={30} 
                 priority
               />
-              <span className={`text-2xl font-bold ${currentTheme.text} hover:scale-105 transition-transform duration-300`}>
-                AgriChain
-              </span>
+              <Link href="/dashboard">
+                <span className={`text-2xl font-bold ${currentTheme.text} hover:scale-105 transition-transform duration-300`}>
+                  AgriChain
+                </span>
+              </Link>
             </div>
             
             <nav className="hidden md:flex items-center space-x-8">
@@ -301,10 +360,10 @@ const Dashboard = () => {
               onClick={() => handleCardClick('/aiInsights')}
             >
               <div className="flex justify-between items-center mb-3">
-                <div className="flex items-center gap-2">
-                  <Cloud className="h-6 w-6" />
-                  <span className="text-2xl font-bold">24° C</span>
-                </div>
+              <div className="flex items-center gap-2">
+                {getWeatherIcon(weather?.description)}
+                <span className="text-2xl font-bold">{Math.round(weather?.max_temp)}° C</span>
+              </div>
                 <ArrowUpRight className="h-5 w-5" />
               </div>
               <div className="min-h-[80px]">
