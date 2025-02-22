@@ -130,13 +130,22 @@ export default function Login() {
           </button>
 
           {/* Links */}
-          <div className="flex justify-center items-center pt-4 text-sm">
+          <div className="flex flex-col items-center pt-4 text-sm">
             <Link 
               href="/forgot-password" 
               className="text-emerald-600 hover:text-emerald-700 font-medium hover:underline"
             >
               Forgot password?
             </Link>
+            <span className="text-gray-600 mt-2">
+              New here? 
+              <Link 
+                href="/register" 
+                className="text-emerald-600 hover:text-emerald-700 font-medium hover:underline ml-1"
+              >
+                Sign Up
+              </Link>
+            </span>
           </div>
         </form>
       </div>
