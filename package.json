@@ -6,9 +6,9 @@
     "type": "module",
     "scripts": {
         "prepare": "husky install",
-        "smart-contracts": "cd smart-contracts && npm run",
-        "frontend": "cd frontend && npm run",
-        "backend": "cd backend && npm run",
+        "smart-contracts": "cd smart-contracts && npm install && npm run",
+        "frontend": "cd frontend && npm install && npm run",
+        "backend": "cd backend && npm install && npm run",
         "dev": "concurrently \"npm run frontend dev\" \"npm run backend dev\"",
         "lint": "eslint ."
     },
