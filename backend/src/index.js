@@ -1,9 +1,18 @@
 import express from 'express';
 import router from './routes/api.route.js';
+import cors from 'cors';
 
 const PORT = process.env.PORT || 5000;
 
 const app = express();
+
+app.use(
+    cors({
+      origin: "http://localhost:3000", 
+      methods: "GET,POST,PUT,DELETE", 
+      credentials: true,
+    })
+  );
 
 app.use(express.json());
 
