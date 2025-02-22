@@ -1,2 +1,2 @@
 # AgriChain
-less goo
+AgriChain is a blockchain-powered platform that connects farmers and consumers directly, ensuring fair pricing and transparency in agriculture. Farmers can register their farms, list products with detailed cost breakdowns, and receive AI-driven insights for better decision-making. An algorithm determines fair pricing based on production costs, market trends, and sustainable farming practices. Smart contracts securely record transactions and verify authenticity. The platform also supports decentralized crowdfunding and surplus crop donations to partner NGOs, fostering a more efficient and sustainable agricultural marketplace.
