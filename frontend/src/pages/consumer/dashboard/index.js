@@ -1,6 +1,7 @@
 // pages/dashboard.js
 import React from 'react';
 import { Search, ShoppingBag, Clock, Star, Box, TrendingUp } from 'lucide-react';
+import Navbar from '@/components/consumer/dashboard/Navbar';
 
 const Dashboard = () => {
   const recentOrders = [
@@ -17,8 +18,9 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#0B513B]">
+    <Navbar />
     {/* Main Content */}
-    <div className="max-w-7xl mx-auto py-6 px-4">
+    <div className="max-w-7xl mx-auto pt-24 py-6 px-4">
       {/* Welcome Message */}
       <h1 className="text-white text-4xl font-bold text-center mb-6">Welcome to the Consumer Dashboard</h1>
 
