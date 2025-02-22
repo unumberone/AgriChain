@@ -47,7 +47,8 @@ const productInsights = async (req, res) => {
       - Any best practices they should follow given the weather conditions.
 
       Provide practical, clear, and useful advice in easy to understand language appealing to the farmer.
-      "Start the advice with "Hello {location} farmer! I have analyse your products - {product list} and here are my insights:"
+      "Start the advice with "Hello {location} farmer! I have analyse your products - {product list} and here are my insights:
+      Keep the whole insights to maximum 1 paragraph"
     `;
 
     const geminiResponse = await fetch(`http://localhost:${PORT}/api/data/gemini`, {
