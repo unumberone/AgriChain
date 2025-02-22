@@ -127,9 +127,9 @@ const Dashboard = () => {
   ];
 
   const products = [
-    { name: "Carrots (20 KG)", price: 565, image: "/api/placeholder/80/80" },
-    { name: "Tomato (3 KG)", price: 74.25, image: "/api/placeholder/80/80", stockLow: true },
-    { name: "Sunflower Seeds (7 KG)", price: 680.72, image: "/api/placeholder/80/80" }
+    { name: "Carrots (20 KG)", price: 565, image: "/images/carrots.jpeg" },
+    { name: "Tomato (3 KG)", price: 74.25, image: "/images/tomato.webp", stockLow: true },
+    { name: "Sunflower Seeds (7 KG)", price: 680.72, image: "/images/sunflower-seeds.jpeg" }
   ];
 
   const handleCardClick = (path) => {
@@ -376,7 +376,7 @@ const Dashboard = () => {
             {/* Products */}
             <Card 
               className={`bg-[#f4f1e7] p-6 flex-1 ${cardClasses}`}
-              onClick={() => handleCardClick('/products')}
+              onClick={() => handleCardClick('/myProducts')}
             >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold">MY PRODUCTS</h2>
