@@ -6,6 +6,7 @@ import productInsights from '../middleware/productInsights.js';
 import fetchWeatherForecast from "../middleware/weather.js";
 import fetchFarmerTip from "../middleware/fetchFarmingTip.js";
 import salesAnalytics from "../middleware/salesAnalytics.js";
+import calculatePriceController from "../middleware/fetchFinalPrice.js";
 
 const router = express.Router()
 
@@ -36,5 +37,7 @@ router.get("/weather", async (req, res) => {
 });
 
 router.get("/farmerTip", fetchFarmerTip);
+
+router.get('/finalPrice', calculatePriceController);
 
 export default router;
