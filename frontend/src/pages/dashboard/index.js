@@ -376,7 +376,7 @@ const Dashboard = () => {
             {/* Products */}
             <Card 
               className={`bg-[#f4f1e7] p-6 flex-1 ${cardClasses}`}
-              onClick={() => handleCardClick('/products')}
+              onClick={() => handleCardClick('/myProducts')}
             >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold">MY PRODUCTS</h2>
