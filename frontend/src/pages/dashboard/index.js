@@ -397,7 +397,7 @@ const Dashboard = () => {
                           <span className="text-red-500 text-sm">Stock Low!</span>
                         )}
                       </div>
-                      <span className="text-lg">₹{product.price}</span>
+                      <span className="text-lg">₹{product.price}/KG</span>
                     </div>
                   </div>
                 ))}

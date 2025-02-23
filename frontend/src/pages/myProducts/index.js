@@ -32,7 +32,7 @@ const MyProducts = () => {
         name: 'Tomato',
         quantity: 3,
         unit: 'KG',
-        price: 74.25,
+        price: 19.25,
         image: '/images/tomato.webp',
         lowStock: true
       },
@@ -41,7 +41,7 @@ const MyProducts = () => {
         name: 'Sunflower Seeds',
         quantity: 7,
         unit: 'KG',
-        price: 68.00,
+        price: 60.00,
         image: '/images/sunflower-seeds.jpeg'
       }
     ]);
@@ -72,14 +72,14 @@ const MyProducts = () => {
         }
   
         // Ensure numeric values are properly formatted
-        const expenses = Number(newProduct.farmerExpenses);
+        const expenses = Number(newProduct.farmerExpenses)/newProduct.quantity;
         const sustainability = Number(newProduct.sustainabilityScore);
   
         if (isNaN(expenses) || isNaN(sustainability)) {
           throw new Error('Invalid numeric values');
         }
   
-        const response = await fetch(`http://localhost:5000/api/data/finalPrice?commodity=${newProduct.name}&&farmerExpenses=${expenses}&&sustainabilityScore=${sustainability}`);
+        const response = await fetch(`http://localhost:${process.env.API_PORT || 5000}/api/data/finalPrice?commodity=${newProduct.name}&&farmerExpenses=${expenses}&&sustainabilityScore=${sustainability}`);
   
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
