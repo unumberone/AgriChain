@@ -47,7 +47,7 @@ For setup instructions, refer to [INSTALLATION.md](INSTALLATION.md)
 - **Sales Analytics:** Sales performance and related data plots.
 
 ### Consumer Interface
-- **Transparency**: QR code tracking, blockchain verification, origin certification, and cost breakdown
+- **Transparency**: Product Verification & Tracking using QR codes, blockchain validation, origin certification, and cost breakdown.
 - **Smart Recommendations**: Seller ranking, sustainability scoring, location-based suggestions.
 
 ### Ecosystem Features
