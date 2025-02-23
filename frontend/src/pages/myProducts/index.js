@@ -21,10 +21,10 @@ const MyProducts = () => {
     const [products, setProducts] = useState([
       {
         id: 1,
-        name: 'Carrots',
-        quantity: 20,
+        name: 'Carrot',
+        quantity: 20.00,
         unit: 'KG',
-        price: 565,
+        price: 35,
         image: '/images/carrots.jpeg'
       },
       {
@@ -41,7 +41,7 @@ const MyProducts = () => {
         name: 'Sunflower Seeds',
         quantity: 7,
         unit: 'KG',
-        price: 680.72,
+        price: 68.00,
         image: '/images/sunflower-seeds.jpeg'
       }
     ]);
@@ -57,7 +57,7 @@ const MyProducts = () => {
       fairPrice: null,
       priceNote: '',
       farmerExpenses: '',
-      sustainabilityScore: 50
+      sustainabilityScore: 5
     });
   
     const LOW_STOCK_THRESHOLD = 5;
@@ -185,7 +185,7 @@ const MyProducts = () => {
               fairPrice: null,
               priceNote: '',
               farmerExpenses: '',
-              sustainabilityScore: 50
+              sustainabilityScore: 5
             });
             
             setIsAddDialogOpen(false);
@@ -292,14 +292,14 @@ const MyProducts = () => {
                   <Slider
                     id="sustainability"
                     min={0}
-                    max={100}
+                    max={10}
                     step={1}
                     value={[newProduct.sustainabilityScore]}
                     onValueChange={([value]) => setNewProduct({...newProduct, sustainabilityScore: value})}
                     className="py-4"
                   />
                   <p className="text-sm text-muted-foreground">
-                    Rate your sustainable farming practices (0-100)
+                    Rate your sustainable farming practices (0-10)
                   </p>
                 </div>
               </div>

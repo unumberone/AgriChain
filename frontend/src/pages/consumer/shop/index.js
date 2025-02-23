@@ -31,7 +31,7 @@ const ShopPage = () => {
     {
       id: 1,
       name: 'Organic Carrots',
-      price: 565,
+      price: 35,
       unit: 'KG',
       farmer: 'Rajesh Kumar',
       location: 'Maharashtra',
@@ -45,7 +45,7 @@ const ShopPage = () => {
     {
       id: 2,
       name: 'Fresh Tomatoes',
-      price: 74.25,
+      price: 19,
       unit: 'KG',
       farmer: 'Priya Singh',
       location: 'Karnataka',
@@ -59,7 +59,7 @@ const ShopPage = () => {
     {
       id: 3,
       name: 'Premium Sunflower Seeds',
-      price: 680.72,
+      price: 60,
       unit: 'KG',
       farmer: 'Amit Patel',
       location: 'Gujarat',
@@ -73,7 +73,7 @@ const ShopPage = () => {
     {
       id: 4,
       name: 'Organic Rice',
-      price: 125.50,
+      price: 50,
       unit: 'KG',
       farmer: 'Lakshmi Devi',
       location: 'Tamil Nadu',
@@ -87,7 +87,7 @@ const ShopPage = () => {
     {
       id: 5,
       name: 'Fresh Spinach',
-      price: 45.00,
+      price: 10,
       unit: 'KG',
       farmer: 'Mohammed Khan',
       location: 'Uttar Pradesh',
@@ -101,7 +101,7 @@ const ShopPage = () => {
     {
       id: 6,
       name: 'Organic Wheat Flour',
-      price: 85.00,
+      price: 40,
       unit: 'KG',
       farmer: 'Gurpreet Singh',
       location: 'Punjab',
@@ -115,7 +115,7 @@ const ShopPage = () => {
     {
       id: 7,
       name: 'Fresh Mangoes',
-      price: 220.00,
+      price: 220,
       unit: 'KG',
       farmer: 'Anita Desai',
       location: 'Maharashtra',
@@ -143,7 +143,7 @@ const ShopPage = () => {
     {
       id: 9,
       name: 'Fresh Green Peas',
-      price: 120.00,
+      price: 60,
       unit: 'KG',
       farmer: 'Sanjay Verma',
       location: 'Himachal Pradesh',
@@ -171,7 +171,7 @@ const ShopPage = () => {
     {
       id: 11,
       name: 'Fresh Coconuts',
-      price: 45.00,
+      price: 20,
       unit: 'piece',
       farmer: 'Thomas George',
       location: 'Kerala',
@@ -185,7 +185,7 @@ const ShopPage = () => {
     {
       id: 12,
       name: 'Organic Lentils',
-      price: 160.00,
+      price: 90,
       unit: 'KG',
       farmer: 'Deepak Sharma',
       location: 'Madhya Pradesh',
@@ -359,7 +359,7 @@ const ShopPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.map((product) => (
-            <Card key={product.id} className="overflow-hidden animate-fadeIn">
+            <Card key={product.id} className="overflow-hidden animate-fadeIn hover:scale-105">
               <div className="aspect-square relative">
                 <img
                   src={`/images/${product.name}.jpeg`}
