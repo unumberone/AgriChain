@@ -36,7 +36,7 @@ export default function ChartComponent() {
     async function fetchData() {
       try {
         console.log("Before")
-        const response = await fetch("http://localhost:5000/api/data/sales");
+        const response = await fetch(`http://localhost:${process.env.API_PORT || 5000}/api/data/sales`);
         console.log("After")
         const result = await response.json();
         setData(Array.isArray(result) ? result : defaultData);

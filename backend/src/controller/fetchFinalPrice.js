@@ -25,7 +25,7 @@ const calculatePriceController = async (req, res) => {
 
     const totalExpenses = farmerExpenses;
     const sustainabilityBonus = sustainabilityScore;
-    const gasFees = 50;
+    const gasFees = 0.5;
 
     const calculatedPrice = totalExpenses + sustainabilityBonus + gasFees;
     let finalPrice;
