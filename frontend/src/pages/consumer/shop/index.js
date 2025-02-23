@@ -254,7 +254,7 @@ const ShopPage = () => {
           <Button 
             variant="ghost" 
             className="text-emerald-50 hover:text-white hover:bg-emerald-700/30"
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push('/consumer/dashboard')}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
