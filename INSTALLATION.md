@@ -2,9 +2,9 @@
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
-2. [Environment Setup](#environment-setup)
-3. [Project Installation](#project-installation)
-4. [Configuration](#configuration)
+2. [MetaMask Setup](#metamask-setup)
+3. [Environment Setup](#environment-setup)
+4. [Project Installation](#project-installation)
 5. [Development Server](#development-server)
 6. [Smart Contract Deployment](#smart-contract-deployment)
 7. [Troubleshooting](#troubleshooting)
@@ -19,6 +19,54 @@ Before beginning the installation, ensure you have the following tools installed
 | npm | Bundled with Node.js | Package manager |
 | MetaMask | Latest | Blockchain interaction |
 | PostgreSQL/NeonDB | Latest | Database management |
+
+## MetaMask Setup
+
+### 1. Install MetaMask
+1. Visit the [MetaMask website](https://metamask.io/download/)
+2. Install the extension for your browser (Chrome, Firefox, Brave, or Edge)
+3. Click on the extension icon and follow the setup wizard
+
+### 2. Create or Import Wallet
+```plaintext
+# For new wallet:
+1. Click "Create a new wallet"
+2. Set up a secure password
+3. Store your 12-word seed phrase securely
+4. Confirm your seed phrase
+
+# For existing wallet:
+1. Click "Import wallet"
+2. Enter your 12-word seed phrase
+3. Set up a new password
+```
+
+### 3. Configure Sepolia Network
+```plaintext
+1. Click network dropdown (usually shows "Ethereum Mainnet")
+2. Click "Add network"
+3. Add Sepolia network details:
+   - Network Name: Sepolia Test Network
+   - RPC URL: https://sepolia.infura.io/v3/
+   - Chain ID: 11155111
+   - Currency Symbol: SepoliaETH
+   - Block Explorer: https://sepolia.etherscan.io
+```
+
+### 4. Get Test ETH
+```plaintext
+1. Copy your wallet address
+2. Visit Sepolia faucet: https://sepoliafaucet.com
+3. Request test ETH for development
+```
+
+### 5. Connect Wallet to AgriChain
+```plaintext
+1. Visit your local AgriChain application (http://localhost:3000)
+2. Click "Connect Wallet" button
+3. Select your MetaMask account
+4. Approve the connection
+```
 
 ## Environment Setup
 
