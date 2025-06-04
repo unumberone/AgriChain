@@ -192,6 +192,11 @@ const ShopPage = () => {
         toast.success("Order placed successfully!");
         setCart([]);
         await fetchCart();
+        // Update wallet balance in localStorage
+        if (typeof data.order?.totalPrice === "number" && typeof user.balance === "number") {
+          const newUser = { ...user, balance: user.balance - data.order.totalPrice };
+          localStorage.setItem("user", JSON.stringify(newUser));
+        }
       } else {
         toast.error(data.message || "Checkout failed");
       }
@@ -355,7 +360,7 @@ const ShopPage = () => {
                         type="number"
                         min={1}
                         max={product.quantity ?? product.available ?? 0}
-                        value={quantityInput[product._id] || ''}
+                        value={quantityInput[product._id] || 0}
                         onChange={e =>
                           setQuantityInput(prev => ({
                             ...prev,

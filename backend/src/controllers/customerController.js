@@ -149,36 +149,55 @@ export const checkout = async (req, res) => {
       return res.status(400).json({ message: 'Please add products to cart' });
     }
 
+    const user = await User.findById(customer);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     let totalPrice = 0;
     const orderProducts = [];
 
+    // Tính tổng tiền trước khi trừ kho
     for (const item of cart) {
-      // Lấy thông tin sản phẩm hiện tại
       const productDoc = await Product.findById(item.product);
       if (!productDoc || productDoc.quantity < item.quantity) {
-        console.log(item.product, productDoc)
         return res.status(400).json({ message: `Not enough quantity for: ${productDoc?.name || 'Unknown'}` });
       }
       totalPrice += productDoc.price * item.quantity;
+    }
+
+    // Kiểm tra số dư
+    if (typeof user.balance === "number" && user.balance < totalPrice) {
+      return res.status(400).json({ message: 'Insufficient balance' });
+    }
+
+    // Tiếp tục trừ kho và tạo đơn hàng
+    for (const item of cart) {
+      const productDoc = await Product.findById(item.product);
       orderProducts.push({
         product: productDoc._id,
         quantity: item.quantity,
         price: productDoc.price,
-        name: productDoc.name, // Lưu tên tại thời điểm mua,
+        name: productDoc.name,
         unit: productDoc.unit,
       });
-      // Trừ số lượng tồn kho
       productDoc.quantity -= item.quantity;
       await productDoc.save();
     }
 
     const order = new Order({
       customer,
-      products: orderProducts, // mỗi item có {product, quantity, price, name}
+      products: orderProducts,
       totalPrice,
       status: 'success'
     });
     await order.save();
+
+    // Trừ tiền user
+    if (typeof user.balance === "number") {
+      user.balance -= totalPrice;
+      await user.save();
+    }
 
     // Xóa giỏ hàng sau khi thanh toán
     const userDoc = await User.findById(customer);

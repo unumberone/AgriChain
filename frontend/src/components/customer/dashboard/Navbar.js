@@ -1,5 +1,5 @@
-import { Menu, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Menu, X, User2, LogOut } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
@@ -7,8 +7,31 @@ export default function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
-  // Thêm hàm logout
+  // Get user info from localStorage
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const u = localStorage.getItem("user");
+      if (u) setUser(JSON.parse(u));
+    }
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    }
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showDropdown]);
+
   const handleLogout = () => {
     localStorage.removeItem('user');
     router.push('/login');
@@ -50,13 +73,42 @@ export default function Navbar() {
                 {item}
               </button>
             ))}
-            {/* Nút Đăng xuất */}
-            <button
-              onClick={handleLogout}
-              className="text-white hover:text-red-500 px-3 py-2 text-sm font-medium transition-colors duration-300"
-            >
-              Logout
-            </button>
+            {/* User Icon with Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setShowDropdown((v) => !v)}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-700 hover:bg-emerald-800 transition-colors"
+                aria-label="Account"
+              >
+                <User2 className="text-white" size={22} />
+              </button>
+              {showDropdown && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-3 z-50 animate-fadeIn">
+                  <div className="px-4 py-2 border-b">
+                    <div className="font-semibold text-emerald-900">
+                      {user?.name || "User"}
+                    </div>
+                    <div className="text-sm text-gray-600 break-all">
+                      {user?.email}
+                    </div>
+                  </div>
+                  <div className="px-4 py-2 flex items-center justify-between">
+                    <span className="text-gray-700 text-sm">Wallet Balance:</span>
+                    <span className="font-bold text-emerald-700">
+                      {typeof user?.balance === "number"
+                        ? user.balance.toLocaleString("en-US") + " VND"
+                        : "--"}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2 px-4 py-2 mt-2 text-red-600 hover:bg-gray-100 transition-colors text-left"
+                  >
+                    <LogOut size={18} /> Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Mobile Navigation Toggle */}
@@ -85,16 +137,44 @@ export default function Navbar() {
                 {item}
               </a>
             ))}
-            {/* Nút Đăng xuất mobile */}
-            <button
-              onClick={() => {
-                handleLogout();
-                setIsMenuOpen(false);
-              }}
-              className="block w-full text-left px-3 py-2 text-base font-medium text-white hover:text-red-500 transition-colors duration-300"
-            >
-              Logout
-            </button>
+            {/* User Icon with Dropdown for mobile */}
+            <div className="border-t border-gray-700 mt-2 pt-2">
+              <button
+                onClick={() => setShowDropdown((v) => !v)}
+                className="flex items-center gap-2 px-3 py-2 text-white hover:text-green-400 transition-colors"
+              >
+                <User2 size={20} /> Account
+              </button>
+              {showDropdown && (
+                <div className="bg-white rounded-lg shadow-lg py-3 mt-2 animate-fadeIn">
+                  <div className="px-4 py-2 border-b">
+                    <div className="font-semibold text-emerald-900">
+                      {user?.name || "User"}
+                    </div>
+                    <div className="text-sm text-gray-600 break-all">
+                      {user?.email}
+                    </div>
+                  </div>
+                  <div className="px-4 py-2 flex items-center justify-between">
+                    <span className="text-gray-700 text-sm">Wallet Balance:</span>
+                    <span className="font-bold text-emerald-700">
+                      {typeof user?.balance === "number"
+                        ? user.balance.toLocaleString("en-US") + " VND"
+                        : "--"}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full flex items-center gap-2 px-4 py-2 mt-2 text-red-600 hover:bg-gray-100 transition-colors text-left"
+                  >
+                    <LogOut size={18} /> Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Sun, Moon, ArrowUpRight, TrendingUp, Trophy } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, Sun, Moon, ArrowUpRight, TrendingUp, Trophy, User2, LogOut } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar } from "@/components/ui/calendar";
@@ -34,6 +34,11 @@ const Dashboard = () => {
   const [revenue, setRevenue] = useState(0);
   const [topProductLine, setTopProductLine] = useState(null);
 
+  // User dropdown
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
@@ -46,15 +51,34 @@ const Dashboard = () => {
 
   useEffect(() => {
     setIsLoggedIn(typeof window !== "undefined" && !!localStorage.getItem("user"));
+    if (typeof window !== "undefined") {
+      const u = localStorage.getItem("user");
+      if (u) setUser(JSON.parse(u));
+    }
   }, []);
 
   useEffect(() => {
     const handleStorage = () => {
       setIsLoggedIn(!!localStorage.getItem("user"));
+      const u = localStorage.getItem("user");
+      if (u) setUser(JSON.parse(u));
+      else setUser(null);
     };
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    }
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showDropdown]);
 
   useEffect(() => {
     const fetchTip = async () => {
@@ -124,6 +148,7 @@ const Dashboard = () => {
   const handleLogout = () => {
     localStorage.removeItem("user");
     setIsLoggedIn(false);
+    setUser(null);
     router.push("/login");
   };
 
@@ -185,13 +210,35 @@ const Dashboard = () => {
                   </button>
                 )}
               </div>
+              {/* User dropdown */}
               {isLoggedIn && (
-                <button
-                  onClick={handleLogout}
-                  className={`${currentTheme.text} hover:text-red-500 px-3 py-2 text-sm font-medium transition-colors duration-300`}
-                >
-                  Logout
-                </button>
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setShowDropdown((v) => !v)}
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-700 hover:bg-emerald-800 transition-colors ml-2"
+                    aria-label="Account"
+                  >
+                    <User2 className="text-white" size={22} />
+                  </button>
+                  {showDropdown && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-3 z-50 animate-fadeIn">
+                      <div className="px-4 py-2 border-b">
+                        <div className="font-semibold text-emerald-900">
+                          {user?.name || "User"}
+                        </div>
+                        <div className="text-sm text-gray-600 break-all">
+                          {user?.email}
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2 px-4 py-2 mt-2 text-red-600 hover:bg-gray-100 transition-colors text-left"
+                      >
+                        <LogOut size={18} /> Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
               )}
               <div className="flex items-center">
                 <GoogleTranslate />
@@ -246,7 +293,7 @@ const Dashboard = () => {
               </button>
               <button
                 onClick={() => {
-                  router.push("/shop");
+                  router.push("/admin/shop");
                   setIsMenuOpen(false);
                 }}
                 className={`block w-full text-left px-3 py-2 text-base font-medium ${currentTheme.text} hover:text-green-400 transition-colors duration-300`}
@@ -263,16 +310,37 @@ const Dashboard = () => {
                   {item}
                 </a>
               ))}
+              {/* User dropdown for mobile */}
               {isLoggedIn && (
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuOpen(false);
-                  }}
-                  className={`block w-full text-left px-3 py-2 text-base font-medium ${currentTheme.text} hover:text-red-500 transition-colors duration-300`}
-                >
-                  Logout
-                </button>
+                <div className="border-t border-gray-300 mt-2 pt-2">
+                  <button
+                    onClick={() => setShowDropdown((v) => !v)}
+                    className="flex items-center gap-2 px-3 py-2 text-emerald-900 hover:text-green-600 transition-colors"
+                  >
+                    <User2 size={20} /> Account
+                  </button>
+                  {showDropdown && (
+                    <div className="bg-white rounded-lg shadow-lg py-3 mt-2 animate-fadeIn">
+                      <div className="px-4 py-2 border-b">
+                        <div className="font-semibold text-emerald-900">
+                          {user?.name || "User"}
+                        </div>
+                        <div className="text-sm text-gray-600 break-all">
+                          {user?.email}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          handleLogout();
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 mt-2 text-red-600 hover:bg-gray-100 transition-colors text-left"
+                      >
+                        <LogOut size={18} /> Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>

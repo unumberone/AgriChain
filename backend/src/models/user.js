@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   phoneNumber: { type: String },
   address: { type: String },
   cart: {type: Array, default: [] },
+  balance: { type: Number, default: 100000000 }, // Default balance set to 10,000,000
 }, { timestamps: true });
 
 export default mongoose.model('User', userSchema);
