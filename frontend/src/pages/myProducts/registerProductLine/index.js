@@ -47,7 +47,7 @@ export default function RegisterProductLine() {
         const file = e.target.files[0];
         if (file) {
             if (file.size > MAX_FILE_SIZE) {
-                toast.error("File chứng nhận quá lớn (tối đa 5MB)!");
+                toast.error("Certification file is too large (max 5MB)!");
                 return;
             }
             const base64 = await fileToBase64(file);
@@ -59,7 +59,7 @@ export default function RegisterProductLine() {
         const file = e.target.files[0];
         if (file) {
             if (file.size > MAX_FILE_SIZE) {
-                toast.error("Hình ảnh quá lớn (tối đa 5MB)!");
+                toast.error("Image is too large (max 5MB)!");
                 return;
             }
             const base64 = await fileToBase64(file);
@@ -74,11 +74,11 @@ export default function RegisterProductLine() {
             return;
         }
         if (!form.certifications) {
-            toast.error("Vui lòng tải lên file chứng nhận!");
+            toast.error("Please upload a certification file!");
             return;
         }
         if (!form.image) {
-            toast.error("Vui lòng tải lên hình ảnh dòng sản phẩm!");
+            toast.error("Please upload a product line image!");
             return;
         }
         setLoading(true);
@@ -117,63 +117,64 @@ export default function RegisterProductLine() {
         <div className="min-h-screen bg-gradient-to-b from-emerald-800 to-emerald-900 flex items-center justify-center">
             <Toaster position="top-right" />
             <Card className="w-full max-w-xl p-8 shadow-lg animate-fadeIn">
-                <div className="flex items-center mb-6">
-                    <Button
-                        variant="ghost"
-                        className="text-emerald-700 hover:text-emerald-900 mr-2"
-                        onClick={() => router.push("/myProducts")}
-                    >
-                        <ArrowLeft className="h-4 w-4 mr-1" />
-                        Back
-                    </Button>
-                    <h2 className="text-2xl font-bold text-emerald-900">Đăng ký dòng sản phẩm</h2>
+                {/* <div className="flex items-center mb-6"> */}
+                <Button
+                    variant="ghost"
+                    className="text-emerald-700 hover:text-emerald-900 mr-2"
+                    onClick={() => router.back()}
+                >
+                    <ArrowLeft className="h-4 w-4 mr-1" />
+                    Back
+                </Button>
+                <div className="flex justify-center items-center mb-6">
+                    <h2 className="text-2xl font-bold text-emerald-900">Register Product Line</h2>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <Label htmlFor="name">Tên dòng sản phẩm </Label>
+                        <Label htmlFor="name">Product Line Name</Label>
                         <Input
                             id="name"
                             name="name"
                             value={form.name}
                             onChange={handleChange}
-                            placeholder="Tên dòng sản phẩm"
+                            placeholder="Product line name"
                             required
                         />
                     </div>
                     <div>
-                        <Label htmlFor="batchId">Lô sản phẩm </Label>
+                        <Label htmlFor="batchId">Batch ID</Label>
                         <Input
                             id="batchId"
                             name="batchId"
                             value={form.batchId}
                             onChange={handleChange}
-                            placeholder="Lô sản phẩm"
+                            placeholder="Batch ID"
                             required
                         />
                     </div>
                     <div>
-                        <Label htmlFor="location">Địa điểm </Label>
+                        <Label htmlFor="location">Location</Label>
                         <Input
                             id="location"
                             name="location"
                             value={form.location}
                             onChange={handleChange}
-                            placeholder="Địa điểm sản xuất"
+                            placeholder="Production location"
                             required
                         />
                     </div>
                     <div>
-                        <Label htmlFor="packagingUnit">Đơn vị đóng gói</Label>
+                        <Label htmlFor="packagingUnit">Packaging Unit</Label>
                         <Input
                             id="packagingUnit"
                             name="packagingUnit"
                             value={form.packagingUnit}
                             onChange={handleChange}
-                            placeholder="Đơn vị đóng gói"
+                            placeholder="Packaging unit"
                         />
                     </div>
                     <div>
-                        <Label htmlFor="harvestDate">Ngày thu hoạch </Label>
+                        <Label htmlFor="harvestDate">Harvest Date</Label>
                         <Input
                             id="harvestDate"
                             name="harvestDate"
@@ -184,20 +185,20 @@ export default function RegisterProductLine() {
                         />
                     </div>
                     <div>
-                        <Label htmlFor="cultivationProcess">Quy trình canh tác</Label>
+                        <Label htmlFor="cultivationProcess">Cultivation Process</Label>
                         <textarea
                             id="cultivationProcess"
                             name="cultivationProcess"
                             value={form.cultivationProcess}
                             onChange={handleCultivationChange}
-                            placeholder="Mỗi dòng là một bước quy trình canh tác"
+                            placeholder="Each line is a step in the cultivation process"
                             rows={4}
                             className="w-full rounded border border-gray-300 px-3 py-2 focus:outline-none focus:ring-emerald-500"
                         />
-                        <span className="text-xs text-gray-500">Nhập nhiều dòng, mỗi dòng là một bước</span>
+                        <span className="text-xs text-gray-500">Enter multiple lines, each line is a step</span>
                     </div>
                     <div>
-                        <Label htmlFor="certifications">Chứng nhận </Label>
+                        <Label htmlFor="certifications">Certification File</Label>
                         <Input
                             id="certifications"
                             name="certifications"
@@ -206,10 +207,10 @@ export default function RegisterProductLine() {
                             onChange={handleCertChange}
                             required
                         />
-                        <span className="text-xs text-gray-500">Chỉ nhận file PDF hoặc ảnh</span>
+                        <span className="text-xs text-gray-500">Only PDF or image files are accepted</span>
                     </div>
                     <div>
-                        <Label htmlFor="image">Hình ảnh dòng sản phẩm *</Label>
+                        <Label htmlFor="image">Product Line Image *</Label>
                         <Input
                             id="image"
                             name="image"
@@ -218,14 +219,14 @@ export default function RegisterProductLine() {
                             onChange={handleImageChange}
                             required
                         />
-                        <span className="text-xs text-gray-500">Chỉ nhận file ảnh</span>
+                        <span className="text-xs text-gray-500">Only image files are accepted</span>
                     </div>
                     <Button
                         type="submit"
                         className="w-full bg-emerald-600 hover:bg-emerald-700 text-white mt-4"
                         disabled={loading}
                     >
-                        {loading ? "Đang đăng ký..." : "Đăng ký dòng sản phẩm"}
+                        {loading ? "Registering..." : "Register Product Line"}
                     </Button>
                 </form>
             </Card>
