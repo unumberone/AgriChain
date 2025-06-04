@@ -14,7 +14,7 @@ contract AgriChain {
     mapping(uint => Product) public products;
 
     event ProductListed(uint id, string name, uint price, address farmer);
-    event ProductPurchased(uint id, address buyer);
+    event ProductPurchased(uint id, address customer);
 
     function listProduct(string memory _name, uint _price) public {
         require(_price > 0, "Price must be greater than 0");

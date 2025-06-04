@@ -74,7 +74,7 @@ model ProductListing {
   @@map("product_listings")
 }
 
-model Consumer {
+model customer {
   id                Int       @id @default(autoincrement())
   name              String
   email             String    @unique
@@ -85,12 +85,12 @@ model Consumer {
   donations         Donation[]
   comments          Comment[]
 
-  @@map("consumers")
+  @@map("customers")
 }
 
 model Order {
   id                    Int            @id @default(autoincrement())
-  consumerId           Int
+  customerId           Int
   farmerId             Int
   listingId            Int
   quantity             Decimal
@@ -99,7 +99,7 @@ model Order {
   blockchainTransactionId String?
   orderDate            DateTime
   createdAt            DateTime        @default(now())
-  consumer             Consumer        @relation(fields: [consumerId], references: [id])
+  customer             customer        @relation(fields: [customerId], references: [id])
   farmer               Farmer          @relation(fields: [farmerId], references: [id])
   productListing       ProductListing  @relation(fields: [listingId], references: [id])
 
@@ -139,7 +139,7 @@ model Comment {
   content    String
   createdAt  DateTime      @default(now())
   post       CommunityPost @relation(fields: [postId], references: [id])
-  consumer   Consumer?     @relation(fields: [authorId], references: [id])
+  customer   customer?     @relation(fields: [authorId], references: [id])
 
   @@map("comments")
 }
@@ -168,7 +168,7 @@ model Donation {
   blockchainTransactionId String?
   createdAt             DateTime              @default(now())
   campaign              CrowdfundingCampaign  @relation(fields: [campaignId], references: [id])
-  donor                 Consumer              @relation(fields: [donorId], references: [id])
+  donor                 customer              @relation(fields: [donorId], references: [id])
 
   @@map("donations")
 }

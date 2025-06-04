@@ -1,14 +1,20 @@
-import pkg from 'pg';
-const { Pool } = pkg;
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const pool = new Pool({
-    connectionString: process.env.DB_URL,
-    ssl: process.env.DB_URL && process.env.DB_URL.includes("neon.tech")
-        ? { rejectUnauthorized: false } 
-        : false, 
-});
+const MONGO_URL = process.env.DB_URL;
+const connectDB = async () => {
+  try {
+    await mongoose.connect(MONGO_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      dbName: 'agrichain', // optional: specify db name
+    });
+    console.log('MongoDB connected');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  }
+};
 
-
-export default pool;
+export default connectDB;

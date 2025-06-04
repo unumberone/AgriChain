@@ -8,14 +8,27 @@ export default function Header({ isDarkMode, setIsDarkMode, currentTheme }) {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setIsLoggedIn(typeof window !== "undefined" && !!localStorage.getItem("user"));
+  }, []);
+
+  // Đảm bảo cập nhật trạng thái khi login/logout
+  useEffect(() => {
+    const handleStorage = () => {
+      setIsLoggedIn(!!localStorage.getItem("user"));
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   return (
@@ -38,7 +51,7 @@ export default function Header({ isDarkMode, setIsDarkMode, currentTheme }) {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {["Guide", "Login"].map((item) => (
+            {["Guide"].map((item) => (
               <button
                 key={item}
                 onClick={() => router.push(`/${item.toLowerCase()}`)}
@@ -47,13 +60,32 @@ export default function Header({ isDarkMode, setIsDarkMode, currentTheme }) {
                 {item}
               </button>
             ))}
+            {!isLoggedIn && (
+              <button
+                onClick={() => router.push("/login")}
+                className={`${currentTheme.text} hover:text-green-400 px-3 py-2 text-sm font-medium transition-colors duration-300`}
+              >
+                Login
+              </button>
+            )}
+            {isLoggedIn && (
+              <button
+                onClick={() => {
+                  localStorage.removeItem("user");
+                  setIsLoggedIn(false);
+                  router.push("/login");
+                }}
+                className={`${currentTheme.text} hover:text-red-500 px-3 py-2 text-sm font-medium transition-colors duration-300`}
+              >
+                Logout
+              </button>
+            )}
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
               className={`p-2 rounded-full hover:bg-gray-200/20 transition-colors duration-300 ${currentTheme.text}`}
             >
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-
             {/* Google Translate Component */}
             <div className="w-[50px] p-2">
               <GoogleTranslate />
@@ -82,7 +114,7 @@ export default function Header({ isDarkMode, setIsDarkMode, currentTheme }) {
       {isMenuOpen && (
         <div className="md:hidden animate-slideDown">
           <div className={`px-2 pt-2 pb-3 space-y-1 sm:px-3 ${currentTheme.headerBg}`}>
-            {["Guide", "Login"].map((item) => (
+            {["Guide"].map((item) => (
               <a
                 key={item}
                 href={`/${item.toLowerCase()}`}
@@ -92,6 +124,28 @@ export default function Header({ isDarkMode, setIsDarkMode, currentTheme }) {
                 {item}
               </a>
             ))}
+            {!isLoggedIn && (
+              <a
+                href="/login"
+                className={`block px-3 py-2 text-base font-medium ${currentTheme.text} hover:text-green-400 transition-colors duration-300`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login
+              </a>
+            )}
+            {isLoggedIn && (
+              <button
+                onClick={() => {
+                  localStorage.removeItem("user");
+                  setIsLoggedIn(false);
+                  setIsMenuOpen(false);
+                  router.push("/login");
+                }}
+                className={`block w-full text-left px-3 py-2 text-base font-medium ${currentTheme.text} hover:text-red-500 transition-colors duration-300`}
+              >
+                Logout
+              </button>
+            )}
             {/* Google Translate in Mobile Menu */}
             <div className="mt-2 px-3">
               <GoogleTranslate />

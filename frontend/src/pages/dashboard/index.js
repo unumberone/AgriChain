@@ -1,7 +1,6 @@
-import React from 'react';
-import { Menu, X, Sun, Moon, ArrowUpRight, Cloud } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import Image from 'next/image'
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Sun, Moon, ArrowUpRight, Cloud, ShoppingBag, Clock, Star } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
@@ -28,10 +27,45 @@ const isToday = (date) => {
   );
 };
 
+const OPEN_WEATHER_API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
+
+// Weather reminder in English
+function getWeatherReminder(weather, date) {
+  if (!weather) return "Always monitor the weather to better care for your crops!";
+  const hour = date ? new Date(date).getHours() : new Date().getHours();
+  const desc = weather.description?.toLowerCase() || "";
+
+  if (desc.includes("rain")) {
+    if (hour >= 5 && hour < 11) return "It's raining this morning, remember to check your field's drainage system!";
+    if (hour >= 11 && hour < 17) return "Rain is expected this afternoon, avoid spraying pesticides and harvesting.";
+    return "It's raining, make sure your crops are not waterlogged.";
+  }
+  if (desc.includes("clear")) {
+    if (hour >= 5 && hour < 11) return "Nice sunny weather, good for watering and pest inspection.";
+    if (hour >= 11 && hour < 17) return "Strong sunlight, avoid working outdoors at noon.";
+    return "Clear skies, check your automatic irrigation system.";
+  }
+  if (desc.includes("cloud")) {
+    if (hour >= 5 && hour < 11) return "Cloudy morning, comfortable temperature for crop growth.";
+    if (hour >= 11 && hour < 17) return "Cloudy afternoon, good time for weeding or fertilizing.";
+    return "Cloudy weather, pay attention to soil moisture for your crops.";
+  }
+  if (desc.includes("fog")) {
+    return "Foggy conditions, avoid spraying and be careful when moving around.";
+  }
+  if (desc.includes("snow")) {
+    return "Snow detected, protect your crops from the cold!";
+  }
+  if (desc.includes("drizzle")) {
+    return "Light drizzle, good time to check for pests on leaves.";
+  }
+  return "Monitor the weather to take care of your crops effectively!";
+}
+
 const Dashboard = () => {
   const router = useRouter();
   const { account, connectWallet } = useWallet();
-  const [date, setDate] = React.useState(new Date());
+  const [date, setDate] = useState(new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [scrolled, setScrolled] = useState(false);
@@ -39,6 +73,11 @@ const Dashboard = () => {
   const [farmerTip, setFarmerTip] = useState('Welcome to AgriChain!');
   const [tipLength, setTipLength] = useState(0);
   const [weather, setWeather] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Real product state
+  const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,6 +90,18 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    setIsLoggedIn(typeof window !== "undefined" && !!localStorage.getItem("user"));
+  }, []);
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setIsLoggedIn(!!localStorage.getItem("user"));
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  useEffect(() => {
     const fetchInsights = async () => {
       try {
         const response = await fetch(`http://localhost:${process.env.API_PORT || 5000}/api/data/farmerInsights`);
@@ -58,7 +109,6 @@ const Dashboard = () => {
         const data = await response.json();
         setAiInsights(data.summary);
       } catch (error) {
-        console.error('Error fetching insights:', error);
         setAiInsights('Unable to load insights. Please try again later.');
       }
     };
@@ -75,7 +125,6 @@ const Dashboard = () => {
         setFarmerTip(data.tip);
         setTipLength(data.tip.length);
       } catch (error) {
-        console.error('Error fetching tip:', error);
         setFarmerTip('Welcome to AgriChain!');
       }
     };
@@ -83,19 +132,68 @@ const Dashboard = () => {
     fetchTip();
   }, []);
 
+  // Weather: get by current location using OpenWeather API
   useEffect(() => {
-    const fetchWeather = async () => {
+    const fetchWeather = async (lat, lon) => {
       try {
-        const response = await fetch(`http://localhost:${process.env.API_PORT || 5000}/api/data/weather?location=coimbatore`);
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPEN_WEATHER_API_KEY}&units=metric`;
+        const response = await fetch(url);
         const data = await response.json();
-        setWeather(data.forecast[0]);
-        console.log(data)
+        if (data && data.weather && data.weather.length > 0) {
+          setWeather({
+            description: data.weather[0].description,
+            max_temp: data.main.temp_max,
+            min_temp: data.main.temp_min,
+            temp: data.main.temp,
+            icon: data.weather[0].icon
+          });
+        }
       } catch (error) {
-        console.error('Error fetching weather:', error);
+        // ignore
       }
     };
-  
-    fetchWeather();
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          fetchWeather(latitude, longitude);
+        },
+        () => {
+          // fallback: Ho Chi Minh City
+          fetchWeather(10.762622, 106.660172);
+        }
+      );
+    } else {
+      fetchWeather(10.762622, 106.660172);
+    }
+  }, []);
+
+  // Fetch real products from backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoadingProducts(true);
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+        const res = await fetch(`${BASE_URL}/products/list`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ farmer: user?._id })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setProducts(data.products || []);
+        } else {
+          setProducts([]);
+        }
+      } catch (err) {
+        setProducts([]);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+    fetchProducts();
   }, []);
 
   const theme = {
@@ -118,22 +216,22 @@ const Dashboard = () => {
       footer: 'bg-gray-800'
     }
   };
-  
-  const currentTheme = isDarkMode ? theme.dark : theme.light;
-  
-  const tasks = [
-    { name: "Check Irrigaton System", time: "9:30 AM" },
-    { name: "Fix Power in Godown", time: "2:00 PM" }
-  ];
 
-  const products = [
-    { name: "Carrots (20 KG)", price: 35.00, image: "/images/carrots.jpeg" },
-    { name: "Tomato (3 KG)", price: 19.25, image: "/images/tomato.webp", stockLow: true },
-    { name: "Sunflower Seeds (7 KG)", price: 60.00, image: "/images/sunflower-seeds.jpeg" }
+  const currentTheme = isDarkMode ? theme.dark : theme.light;
+
+  const tasks = [
+    { name: "Check Irrigation System", time: "9:30 AM" },
+    { name: "Fix Power in Godown", time: "2:00 PM" }
   ];
 
   const handleCardClick = (path) => {
     router.push(path);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    router.push("/login");
   };
 
   const cardClasses = "transition-all duration-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer";
@@ -170,18 +268,24 @@ const Dashboard = () => {
     }
   };
 
+  // Format quantity and VND currency
+  const formatQuantity = (value, unit) =>
+    `${Number(value).toLocaleString('en-US', { maximumFractionDigits: 2 })} ${unit}`;
+  const formatCurrency = (value) =>
+    Number(value).toLocaleString('en-US', { style: 'currency', currency: 'VND' });
+
   return (
     <div className={`min-h-screen ${currentTheme.bg} transition-colors duration-500 pb-16`}>
-      {/* Header */}
+      {/* Header with top navigation */}
       <header className={`fixed w-full ${scrolled ? currentTheme.headerBg : `${currentTheme.headerBg} bg-opacity-50`} transition-all duration-500 z-50`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center">
             <div className="flex items-center space-x-2">
-              <Image 
-                src="/images/logo.png" 
-                alt="AgriChain Logo" 
-                width={30} 
-                height={30} 
+              <Image
+                src="/images/logo.png"
+                alt="AgriChain Logo"
+                width={30}
+                height={30}
                 priority
               />
               <Link href="/dashboard">
@@ -190,39 +294,51 @@ const Dashboard = () => {
                 </span>
               </Link>
             </div>
-            
+            {/* Top navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              {["Guide", "Aid", "Community"].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => router.push(`/${item.toLowerCase()}`)}
-                  className={`${currentTheme.text} hover:text-green-400 px-3 py-2 text-sm font-medium transition-colors duration-300`}
-                >
-                  {item}
-                </button>
-              ))}
-
-              {/* Wallet Connection Button */}
+              <button
+                onClick={() => router.push("/myProducts/myProductLines")}
+                className={`${currentTheme.text} hover:text-green-400 px-3 py-2 text-sm font-medium transition-colors duration-300`}
+              >
+                ProductLine
+              </button>
+              <button
+                onClick={() => router.push("/guide")}
+                className={`${currentTheme.text} hover:text-green-400 px-3 py-2 text-sm font-medium transition-colors duration-300`}
+              >
+                Guide
+              </button>
+              <button
+                onClick={() => router.push("/community")}
+                className={`${currentTheme.text} hover:text-green-400 px-3 py-2 text-sm font-medium transition-colors duration-300`}
+              >
+                Community
+              </button>
               <div className="flex items-center">
                 {account ? (
                   <span className={`px-3 py-1 ${currentTheme.button} rounded-md`}>
                     {account.slice(0, 6)}...{account.slice(-4)}
                   </span>
                 ) : (
-                  <button 
-                    onClick={connectWallet} 
+                  <button
+                    onClick={connectWallet}
                     className={`${currentTheme.text} hover:text-green-400 px-3 py-2 text-sm font-medium transition-colors duration-300`}
                   >
                     Connect Wallet
                   </button>
                 )}
               </div>
-
-              {/* Google Translate Dropdown */}
+              {isLoggedIn && (
+                <button
+                  onClick={handleLogout}
+                  className={`${currentTheme.text} hover:text-red-500 px-3 py-2 text-sm font-medium transition-colors duration-300`}
+                >
+                  Logout
+                </button>
+              )}
               <div className="flex items-center">
                 <GoogleTranslate />
               </div>
-              
               <button
                 onClick={() => setIsDarkMode(!isDarkMode)}
                 className={`p-2 rounded-full hover:bg-gray-200/20 transition-colors duration-300 ${currentTheme.text}`}
@@ -230,22 +346,20 @@ const Dashboard = () => {
                 {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
               </button>
             </nav>
-
+            {/* Mobile menu */}
             <div className="md:hidden flex items-center space-x-4">
-              {/* Mobile Wallet Button */}
               {account ? (
                 <span className={`px-3 py-1 ${currentTheme.button} rounded-md text-sm`}>
                   {account.slice(0, 6)}...{account.slice(-4)}
                 </span>
               ) : (
-                <button 
-                  onClick={connectWallet} 
+                <button
+                  onClick={connectWallet}
                   className={`px-3 py-1 ${currentTheme.button} rounded-md text-sm`}
                 >
                   Connect
                 </button>
               )}
-              
               <button
                 onClick={() => setIsDarkMode(!isDarkMode)}
                 className={`p-2 rounded-full hover:bg-gray-200/20 transition-colors duration-300 ${currentTheme.text}`}
@@ -261,39 +375,65 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden animate-slideDown">
             <div className={`px-2 pt-2 pb-3 space-y-1 sm:px-3 ${currentTheme.headerBg}`}>
-              {["Guide", "Aid", "Community"].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className={`block px-3 py-2 text-base font-medium ${currentTheme.text} hover:text-green-400 transition-colors duration-300`}
-                  onClick={() => setIsMenuOpen(false)}
+              <button
+                onClick={() => {
+                  router.push("/myProducts/myProductLines");
+                  setIsMenuOpen(false);
+                }}
+                className={`block w-full text-left px-3 py-2 text-base font-medium ${currentTheme.text} hover:text-green-400 transition-colors duration-300`}
+              >
+                ProductLine
+              </button>
+              <button
+                onClick={() => {
+                  router.push("/guide");
+                  setIsMenuOpen(false);
+                }}
+                className={`block w-full text-left px-3 py-2 text-base font-medium ${currentTheme.text} hover:text-green-400 transition-colors duration-300`}
+              >
+                Guide
+              </button>
+              <button
+                onClick={() => {
+                  router.push("/community");
+                  setIsMenuOpen(false);
+                }}
+                className={`block w-full text-left px-3 py-2 text-base font-medium ${currentTheme.text} hover:text-green-400 transition-colors duration-300`}
+              >
+                Community
+              </button>
+              {isLoggedIn && (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  className={`block w-full text-left px-3 py-2 text-base font-medium ${currentTheme.text} hover:text-red-500 transition-colors duration-300`}
                 >
-                  {item}
-                </a>
-              ))}
+                  Logout
+                </button>
+              )}
             </div>
           </div>
         )}
       </header>
-      
+
       <main className="pt-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <h1 
+        <h1
           className={`text-white font-bold mb-8 text-center transition-all duration-300 ${
             tipLength > 40 ? 'text-3xl' : 'text-4xl'
           }`}
         >
           {farmerTip}
         </h1>
-
         <div className="flex flex-col lg:flex-row gap-4 mb-8">
           <div className="flex-1 flex flex-col gap-4">
             {/* Sales Analytics Card */}
-            <Card 
+            <Card
               className={`bg-[#f4f1e7] p-6 h-[300px] ${cardClasses}`}
               onClick={() => handleCardClick('/analytics')}
             >
@@ -351,30 +491,38 @@ const Dashboard = () => {
               </div>
             </Card>
           </div>
-          
+
           {/* Right Column */}
           <div className="flex-1 flex flex-col gap-4">
-            {/* AI Insights */}
-            <Card 
+            {/* Weather & Reminder Card */}
+            <Card
               className={`bg-[#f4f1e7] p-6 ${cardClasses}`}
               onClick={() => handleCardClick('/aiInsights')}
             >
               <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center gap-2">
-                {getWeatherIcon(weather?.description)}
-                <span className="text-2xl font-bold">{Math.round(weather?.max_temp)}° C</span>
-              </div>
+                <div className="flex items-center gap-2">
+                  {weather?.icon ? (
+                    <img
+                      src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
+                      alt={weather.description}
+                      className="h-8 w-8"
+                    />
+                  ) : getWeatherIcon(weather?.description)}
+                  <span className="text-2xl font-bold">
+                    {weather ? Math.round(weather.temp) : "--"}° C
+                  </span>
+                </div>
                 <ArrowUpRight className="h-5 w-5" />
               </div>
               <div className="min-h-[80px]">
                 <p className="text-gray-800 text-l leading-relaxed line-clamp-3">
-                  {aiInsights}
+                  {getWeatherReminder(weather, date)}
                 </p>
               </div>
             </Card>
-            
+
             {/* Products */}
-            <Card 
+            <Card
               className={`bg-[#f4f1e7] p-6 flex-1 ${cardClasses}`}
               onClick={() => handleCardClick('/myProducts')}
             >
@@ -383,24 +531,35 @@ const Dashboard = () => {
                 <ArrowUpRight className="h-5 w-5" />
               </div>
               <div className="space-y-4">
-                {products.map((product, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-16 h-16 rounded-lg object-cover"
-                    />
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">{product.name}</span>
-                        {product.stockLow && (
-                          <span className="text-red-500 text-sm">Stock Low!</span>
-                        )}
+                {loadingProducts ? (
+                  <div className="text-center text-gray-500 py-8">Loading products...</div>
+                ) : products.length === 0 ? (
+                  <div className="text-center text-gray-500 py-8">No products in your inventory</div>
+                ) : (
+                  products.map((product, i) => (
+                    <div key={product._id || i} className="flex items-center gap-4">
+                      <img
+                        src={product.image || '/api/placeholder/400/400'}
+                        alt={product.name}
+                        className="w-16 h-16 rounded-lg object-cover"
+                      />
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">{product.name}</span>
+                          {Number(product.quantity) <= 5 && (
+                            <span className="text-red-500 text-sm">Stock Low!</span>
+                          )}
+                        </div>
+                        <span className="text-lg">
+                          {formatCurrency(product.price)} / {product.unit}
+                        </span>
+                        <div className="text-gray-600 text-sm">
+                          {formatQuantity(product.quantity, product.unit)}
+                        </div>
                       </div>
-                      <span className="text-lg">₹{product.price}/KG</span>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </Card>
           </div>

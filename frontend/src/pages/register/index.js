@@ -3,10 +3,13 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
 import { ArrowLeft } from 'lucide-react';
+import axios from 'axios';
 
 export default function Register() {
   const router = useRouter();
   const [role, setRole] = useState('farmer');
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,13 +19,32 @@ export default function Register() {
     address: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', { ...formData, role });
-    
-    // Redirect based on role
-    const redirectPath = role === 'farmer' ? '/dashboard' : '/consumer/dashboard';
-    router.push(redirectPath);
+
+    // Kiểm tra xác nhận mật khẩu
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+
+    try {
+      // Gửi dữ liệu đăng ký lên backend
+      const res = await axios.post(`${BASE_URL}/register`, {
+        ...formData,
+        role
+      });
+
+      if (res.status === 201) {
+        alert('Register success!');
+        // Điều hướng theo role
+        if (role === 'farmer') router.push('/dashboard');
+        else if (role === 'customer') router.push('/customer/dashboard');
+        // Bỏ điều hướng admin
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Register failed!');
+    }
   };
 
   const handleChange = (e) => {
@@ -53,7 +75,7 @@ export default function Register() {
         </Link>
 
         <div className="mt-8 mb-6">
-          <div className="flex p-1 bg-gray-100 rounded-lg">
+          <div className="flex p-1 bg-gray-100 rounded-lg gap-2">
             <button
               type="button"
               onClick={() => setRole('farmer')}
@@ -63,11 +85,12 @@ export default function Register() {
             </button>
             <button
               type="button"
-              onClick={() => setRole('consumer')}
-              className={`flex-1 py-3 text-sm font-medium rounded-md transition-all duration-200 ${role === 'consumer' ? 'bg-emerald-500 text-white shadow-sm' : 'text-gray-600 hover:text-gray-800'}`}
+              onClick={() => setRole('customer')}
+              className={`flex-1 py-3 text-sm font-medium rounded-md transition-all duration-200 ${role === 'customer' ? 'bg-emerald-500 text-white shadow-sm' : 'text-gray-600 hover:text-gray-800'}`}
             >
-              Consumer
+              Customer
             </button>
+            {/* Đã bỏ nút Admin */}
           </div>
         </div>
 
@@ -80,13 +103,11 @@ export default function Register() {
           <input type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} className="w-full px-4 py-3 border rounded-lg" required />
 
           <button
-  type="submit"
-  className="w-full bg-emerald-500 text-white py-3.5 px-4 rounded-lg hover:bg-emerald-600 transition duration-200 font-medium shadow-sm hover:shadow-md transform hover:-translate-y-0.5 mt-6"
-  onClick={() => window.location.href = "/dashboard"}
->
-  Create Account as {role === 'farmer' ? 'Farmer' : 'Consumer'}
-</button>
-
+            type="submit"
+            className="w-full bg-emerald-500 text-white py-3.5 px-4 rounded-lg hover:bg-emerald-600 transition duration-200 font-medium shadow-sm hover:shadow-md transform hover:-translate-y-0.5 mt-6"
+          >
+            Create Account as {role.charAt(0).toUpperCase() + role.slice(1)}
+          </button>
 
           <div className="text-center pt-4 text-sm">
             <span className="text-gray-600">Already have an account? </span>

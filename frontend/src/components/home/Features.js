@@ -14,7 +14,7 @@ const Features = ({currentTheme, isDarkMode}) => {
         },
         {
           title: "Community Collaboration",
-          description: "Connect directly with farmers, distributors, and buyers in a decentralized marketplace.",
+          description: "Connect directly with farmers, distributors, and customers in a decentralized marketplace.",
           Icon: Users
         },
         {

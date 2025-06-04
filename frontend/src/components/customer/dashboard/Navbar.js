@@ -1,4 +1,3 @@
-// components/Navbar.js
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -8,6 +7,12 @@ export default function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Thêm hàm logout
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    router.push('/login');
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,12 +44,19 @@ export default function Navbar() {
             {["Guide", "Shop"].map((item) => (
               <button
                 key={item}
-                onClick={() => router.push(`/consumer/${item.toLowerCase()}`)}
+                onClick={() => router.push(`/customer/${item.toLowerCase()}`)}
                 className="text-white hover:text-green-400 px-3 py-2 text-sm font-medium transition-colors duration-300"
               >
                 {item}
               </button>
             ))}
+            {/* Nút Đăng xuất */}
+            <button
+              onClick={handleLogout}
+              className="text-white hover:text-red-500 px-3 py-2 text-sm font-medium transition-colors duration-300"
+            >
+              Logout
+            </button>
           </nav>
 
           {/* Mobile Navigation Toggle */}
@@ -66,13 +78,23 @@ export default function Navbar() {
             {["Guide", "Shop"].map((item) => (
               <a
                 key={item}
-                href={`/${item.toLowerCase()}`}
+                href={`/customer/${item.toLowerCase()}`}
                 className="block px-3 py-2 text-base font-medium text-white hover:text-green-400 transition-colors duration-300"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item}
               </a>
             ))}
+            {/* Nút Đăng xuất mobile */}
+            <button
+              onClick={() => {
+                handleLogout();
+                setIsMenuOpen(false);
+              }}
+              className="block w-full text-left px-3 py-2 text-base font-medium text-white hover:text-red-500 transition-colors duration-300"
+            >
+              Logout
+            </button>
           </div>
         </div>
       )}

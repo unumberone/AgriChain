@@ -18,7 +18,7 @@ const defaultData = [
   { month: 'Feb', revenue: 10 },
   { month: 'Mar', revenue: 10 },
   { month: 'Apr', revenue: 10 },
-  { month: 'May', revenue: 45000 },
+  { month: 'May', revenue: 4500 },
   { month: 'Jun', revenue: 10000 },
   { month: 'Jul', revenue: 11000 },
   { month: 'Aug', revenue: 10500 },

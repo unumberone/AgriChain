@@ -122,7 +122,7 @@ const Documentation = () => {
             </div>
             
             <nav className="hidden md:flex items-center space-x-8">
-              {["Guide", "Aid", "Community"].map((item) => (
+              {["Guide", "Community"].map((item) => (
                 <a
                   key={item}
                   href={`/${item.toLowerCase()}`}
@@ -195,7 +195,7 @@ const Documentation = () => {
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-[#0B513B] rounded-full" />
-                <span>Connect directly with buyers</span>
+                <span>Connect directly with customers</span>
               </li>
               <li className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-[#0B513B] rounded-full" />
@@ -241,7 +241,7 @@ const Documentation = () => {
               </div>
               <div className="p-4 bg-white rounded-lg">
                 <h3 className="font-semibold mb-2">Marketplace</h3>
-                <p>Connect with buyers and sell your products</p>
+                <p>Connect with customers and sell your products</p>
               </div>
               <div className="p-4 bg-white rounded-lg">
                 <h3 className="font-semibold mb-2">Crowdfunding</h3>

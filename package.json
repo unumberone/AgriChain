@@ -1,7 +1,7 @@
 {
     "name": "agrichain",
     "version": "1.0.0",
-    "description": "Blockchain-based agricultural marketplace connecting farmers and consumers",
+    "description": "Blockchain-based agricultural marketplace connecting farmers and customers",
     "main": "index.js",
     "type": "module",
     "scripts": {

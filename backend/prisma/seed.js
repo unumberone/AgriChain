@@ -15,7 +15,7 @@ async function main() {
     prisma.farmingPractice.deleteMany(),
     prisma.farm.deleteMany(),
     prisma.farmer.deleteMany(),
-    prisma.consumer.deleteMany(),
+    prisma.customer.deleteMany(),
     prisma.location.deleteMany(),
   ]);
 
@@ -157,22 +157,22 @@ async function main() {
     })
   ]);
 
-  // Create consumers
-  const consumers = await Promise.all([
-    prisma.consumer.create({
+  // Create customers
+  const customers = await Promise.all([
+    prisma.customer.create({
       data: {
         name: 'Amit Patel',
         email: 'amit.patel@example.com',
         contactNumber: '+91-9876543212',
-        blockchainIdentity: '0xconsumer123'
+        blockchainIdentity: '0xcustomer123'
       }
     }),
-    prisma.consumer.create({
+    prisma.customer.create({
       data: {
         name: 'Sneha Reddy',
         email: 'sneha.reddy@example.com',
         contactNumber: '+91-9876543213',
-        blockchainIdentity: '0xconsumer456'
+        blockchainIdentity: '0xcustomer456'
       }
     })
   ]);
@@ -181,7 +181,7 @@ async function main() {
   await Promise.all([
     prisma.order.create({
       data: {
-        consumerId: consumers[0].id,
+        customerId: customers[0].id,
         farmerId: farmers[0].id,
         listingId: listings[0].id,
         quantity: 10.0,
@@ -193,7 +193,7 @@ async function main() {
     }),
     prisma.order.create({
       data: {
-        consumerId: consumers[1].id,
+        customerId: customers[1].id,
         farmerId: farmers[1].id,
         listingId: listings[1].id,
         quantity: 2.0,
@@ -250,16 +250,16 @@ async function main() {
     prisma.comment.create({
       data: {
         postId: posts[0].id,
-        authorId: consumers[0].id,
-        authorType: 'consumer',
+        authorId: customers[0].id,
+        authorType: 'customer',
         content: 'Very helpful information!'
       }
     }),
     prisma.comment.create({
       data: {
         postId: posts[1].id,
-        authorId: consumers[1].id,
-        authorType: 'consumer',
+        authorId: customers[1].id,
+        authorType: 'customer',
         content: 'Thanks for the market update'
       }
     })
@@ -298,7 +298,7 @@ async function main() {
     prisma.donation.create({
       data: {
         campaignId: campaigns[0].id,
-        donorId: consumers[0].id,
+        donorId: customers[0].id,
         amount: 5000.0,
         blockchainTransactionId: '0xdonation123'
       }
@@ -306,7 +306,7 @@ async function main() {
     prisma.donation.create({
       data: {
         campaignId: campaigns[1].id,
-        donorId: consumers[1].id,
+        donorId: customers[1].id,
         amount: 3000.0,
         blockchainTransactionId: '0xdonation456'
       }

@@ -14,17 +14,17 @@
 | 9 | [License](#license) |
 
 ## Introduction
-AgriChain is a blockchain-powered platform that connects farmers and consumers directly, ensuring fair pricing, transparency, and sustainability in agriculture through smart contracts and AI-driven insights.
+AgriChain is a blockchain-powered platform that connects farmers and customers directly, ensuring fair pricing, transparency, and sustainability in agriculture through smart contracts and AI-driven insights.
 
 ## Pain Points in Farming
-The agricultural sector faces many challenges that impact both farmers and consumers. Here are some of the key pain points we observed:
+The agricultural sector faces many challenges that impact both farmers and customers. Here are some of the key pain points we observed:
 
 ### 1. Unfair Pricing & Market Access
 - Middlemen reduce farmers' earnings and limit direct market access.
 - Price fluctuations cause income instability.
 
 ### 2. Lack of Transparency in Supply Chain
-- Consumers can't verify product authenticity or pricing fairness.
+- customers can't verify product authenticity or pricing fairness.
 - Absence of proper tracking of agricultural goods.
 
 ### 3. Limited Access to Market Intelligence
@@ -32,10 +32,10 @@ The agricultural sector faces many challenges that impact both farmers and consu
 - Limited knowledge sharing and access to learning resources for farmers.
 
 ## Motive
-As students focused on real-world problem-solving, we created this solution to help farmers get fair pricing, better market access, and more transparency. By using blockchain and AI, we aim to build a practical system that benefits both farmers and consumers.
+As students focused on real-world problem-solving, we created this solution to help farmers get fair pricing, better market access, and more transparency. By using blockchain and AI, we aim to build a practical system that benefits both farmers and customers.
 
 ## Solution  
-Our solution connects farmers and consumers directly, ensuring fair pricing and transparency. Farmers can register farms, list products with cost breakdowns, and receive AI-driven insights. An algorithm determines fair pricing based on costs, market trends, and sustainability. Smart contracts record transactions and verify authenticity. The platform also supports decentralized crowdfunding and surplus crop donations to NGOs.
+Our solution connects farmers and customers directly, ensuring fair pricing and transparency. Farmers can register farms, list products with cost breakdowns, and receive AI-driven insights. An algorithm determines fair pricing based on costs, market trends, and sustainability. Smart contracts record transactions and verify authenticity. The platform also supports decentralized crowdfunding and surplus crop donations to NGOs.
 
 ## Installation Steps
 For setup instructions, refer to [INSTALLATION.md](INSTALLATION.md)
@@ -46,7 +46,7 @@ For setup instructions, refer to [INSTALLATION.md](INSTALLATION.md)
 - **AI-Driven Insights:** Farmer news, market trends, and product insights.  
 - **Sales Analytics:** Sales performance and related data plots.
 
-### Consumer Interface
+### customer Interface
 - **Transparency**: Product Verification & Tracking using QR codes, blockchain validation, origin certification, and cost breakdown.
 - **Smart Recommendations**: Seller ranking, sustainability scoring, location-based suggestions.
 

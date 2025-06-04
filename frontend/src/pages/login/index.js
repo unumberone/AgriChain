@@ -3,23 +3,32 @@ import Link from 'next/link';
 import Head from 'next/head';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/router';
+import axios from 'axios';
 
 export default function Login() {
   const router = useRouter();
   const [role, setRole] = useState('farmer');
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', { ...formData, role });
-    // Add your authentication logic here
-    
-    // After successful authentication, redirect to dashboard
-    if(role=='farmer') router.push('/dashboard');
-    else router.push('/consumer/dashboard');
+    try {
+      const res = await axios.post(`${BASE_URL}/login`, { ...formData, role });
+      const user = res.data.user;
+      localStorage.setItem('user', JSON.stringify(user));
+
+      if (user.role === 'farmer') router.push('/dashboard');
+      else if (user.role === 'customer') router.push('/customer/dashboard');
+      else if (user.role === 'admin') router.push('/admin/dashboard');
+      else alert('Role not supported');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Login failed');
+    }
   };
 
   const handleChange = (e) => {
@@ -48,8 +57,8 @@ export default function Login() {
       {/* Login Form Card */}
       <div className="w-full max-w-md bg-white rounded-xl shadow-2xl p-8 relative">
         {/* Back Button */}
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="absolute top-4 left-4 flex items-center text-gray-600 hover:text-emerald-600 transition-colors group"
         >
           <ArrowLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
@@ -58,26 +67,36 @@ export default function Login() {
 
         {/* Role Selector */}
         <div className="mb-6 mt-8">
-          <div className="flex p-1 bg-gray-100 rounded-lg">
+          <div className="flex p-1 bg-gray-100 rounded-lg gap-2">
             <button
               onClick={() => setRole('farmer')}
-              className={`flex-1 py-3 text-sm font-medium rounded-md transition-all duration-200 ${
-                role === 'farmer'
-                  ? 'bg-emerald-500 text-white shadow-sm'
-                  : 'text-gray-600 hover:text-gray-800'
-              }`}
+              type="button"
+              className={`flex-1 py-3 text-sm font-medium rounded-md transition-all duration-200 ${role === 'farmer'
+                ? 'bg-emerald-500 text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-800'
+                }`}
             >
               Farmer
             </button>
             <button
-              onClick={() => setRole('consumer')}
-              className={`flex-1 py-3 text-sm font-medium rounded-md transition-all duration-200 ${
-                role === 'consumer'
-                  ? 'bg-emerald-500 text-white shadow-sm'
-                  : 'text-gray-600 hover:text-gray-800'
-              }`}
+              onClick={() => setRole('customer')}
+              type="button"
+              className={`flex-1 py-3 text-sm font-medium rounded-md transition-all duration-200 ${role === 'customer'
+                ? 'bg-emerald-500 text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-800'
+                }`}
             >
-              Consumer
+              Customer
+            </button>
+            <button
+              onClick={() => setRole('admin')}
+              type="button"
+              className={`flex-1 py-3 text-sm font-medium rounded-md transition-all duration-200 ${role === 'admin'
+                ? 'bg-emerald-500 text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-800'
+                }`}
+            >
+              Admin
             </button>
           </div>
         </div>
@@ -127,21 +146,21 @@ export default function Login() {
             type="submit"
             className="w-full bg-emerald-500 text-white py-3.5 px-4 rounded-lg hover:bg-emerald-600 transition duration-200 font-medium shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
           >
-            Sign in as {role === 'farmer' ? 'Farmer' : 'Consumer'}
+            Sign in as {role.charAt(0).toUpperCase() + role.slice(1)}
           </button>
 
           {/* Links */}
           <div className="flex flex-col items-center pt-4 text-sm">
-            <Link 
-              href="/forgot-password" 
+            <Link
+              href="/forgot-password"
               className="text-emerald-600 hover:text-emerald-700 font-medium hover:underline"
             >
               Forgot password?
             </Link>
             <span className="text-gray-600 mt-2">
-              New here? 
-              <Link 
-                href="/register" 
+              New here?
+              <Link
+                href="/register"
                 className="text-emerald-600 hover:text-emerald-700 font-medium hover:underline ml-1"
               >
                 Sign Up

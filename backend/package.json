@@ -14,14 +14,17 @@
     "@google/generative-ai": "^0.22.0",
     "@prisma/client": "^6.4.1",
     "axios": "^1.7.9",
+    "bcryptjs": "^3.0.2",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",
     "express": "^4.21.2",
     "hardhat": "^2.22.18",
+    "mongoose": "^8.15.1",
     "node-fetch": "^3.3.2",
     "nodemon": "^3.1.9",
     "pg": "^8.13.3",
     "puppeteer": "^24.2.1",
+    "qrcode": "^1.5.4",
     "rss-parser": "^3.13.0"
   },
   "devDependencies": {
